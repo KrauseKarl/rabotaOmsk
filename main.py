@@ -1,8 +1,11 @@
 import itertools
 import locale
+from re import search
+from typing import Dict, List, Optional
+
 import uvicorn
 from fastapi import FastAPI, Request, Depends
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.sessions import SessionMiddleware
@@ -10,7 +13,7 @@ from starlette.middleware.trustedhost import TrustedHostMiddleware
 from starlette.templating import Jinja2Templates
 
 locale.setlocale(category=locale.LC_ALL, locale="ru_RU.UTF-8")
-dbd = {
+vacancies_list = {
     "parikmaher": {
         "slug": "parikmaher",
         "vacancy": "Парикмахер",
@@ -40,10 +43,16 @@ dbd = {
     "master-manikyura": {
         "slug": "master-manikyura",
         "vacancy": "Вакансия мастер маникюра",
+        "title": "Мастер маникюра",
         "salary": " от 40 до 70 тыс.",
         "experience": "без опыта",
         "time_table": " с 9 до 20",
-        "shift": False,
+        "shift": None,
+        "employer": "NikeNagel",
+        "contacts": ["+7(900) 800-70-69", "emploer@mai.com", ],
+        "advantages": ['advantage 1', 'advantage 2', 'advantage 3'],
+        "responsibility": ['responsibility 1', 'responsibility 2', 'responsibility 3'],
+        "requirements": ['requirements 1', 'requirements 2', 'requirements 3'],
         "description":
             """
             Мастер маникюра работа для nail master в сети салонов Nika Nagel
@@ -61,24 +70,24 @@ dbd = {
             'бесплатное обучение маникюру в туле',
             'ученик мастера маникюра',
         ],
-        },
+    },
     "administrator": {
-            "slug": "administrator",
-            "vacancy": "Администратор",
-            "salary": " от 30 до 60 тыс.",
-            "experience": "без опыта",
-            "time_table": " с 9 до 20",
-            "shift": " сменный график",
-            "description":
-                """
-            Работа администратором салона красоты в Туле
-            или администратор учебного центра Nika Nagel даст Вам
-            возможность управлять салоном красоты,
-            иметь стабильный доход, расширить круг знакомств,
-            находиться в невероятной ауре красоты, проявить
-            творческие способности, быть нужной
-            частичкой компании.Возьмем  кандидата без опыта работы и всему научим.
-            """,
+        "slug": "administrator",
+        "vacancy": "Администратор",
+        "salary": " от 30 до 60 тыс.",
+        "experience": "без опыта",
+        "time_table": " с 9 до 20",
+        "shift": " сменный график",
+        "description":
+            """
+        Работа администратором салона красоты в Туле
+        или администратор учебного центра Nika Nagel даст Вам
+        возможность управлять салоном красоты,
+        иметь стабильный доход, расширить круг знакомств,
+        находиться в невероятной ауре красоты, проявить
+        творческие способности, быть нужной
+        частичкой компании.Возьмем  кандидата без опыта работы и всему научим.
+        """,
         "hashtags": [
             "работа администратором тула",
             "работа в туле",
@@ -115,7 +124,7 @@ dbd = {
             "вакансия мастера по наращиванию ресниц в Туле",
             "lashmaker Тула",
             "лашмейкер Тула",
-            "курсы наращивания ресниц Тула" ,
+            "курсы наращивания ресниц Тула",
         ],
     },
     "master-epilyacii-LPG-massazh-sovmeshchennyj": {
@@ -291,12 +300,20 @@ dbd = {
         ],
     },
 }
-cat = {
+types_dict = {
     "1": "полная занятость",
     "2": "частичная занятость",
     "3": "вахтовый метод",
     "4": "для студентов",
     "5": "удаленная",
+}
+categories_dict = {
+    "1": "менеджер по продажам",
+    "2": "строитель",
+    "3": "курьер",
+    "4": "промоутер",
+    "5": "администратор",
+    "6": "дизайнер, художник"
 }
 
 app = FastAPI()
@@ -326,16 +343,68 @@ app.add_middleware(
 )
 
 
+def get_categories_list():
+    try:
+        return dict(itertools.islice(categories_dict.items(), 5))
+    except (KeyError, IsADirectoryError):
+        return {}
+
+
+def get_vacancies_list():
+    try:
+        return dict(itertools.islice(vacancies_list.items(), 5))
+    except (KeyError, IsADirectoryError):
+        return {}
+
+
+def get_typies_list():
+    try:
+        return dict(itertools.islice(types_dict.items(), 5))
+    except (KeyError, IsADirectoryError):
+        return {}
+
+
+def get_tags_list():
+    try:
+        return [t for vac in vacancies_list.values() for t in vac['hashtags']]
+    except (KeyError, IsADirectoryError):
+        return {}
+
+
+def get_categories():
+    try:
+        return categories_dict
+    except Exception:
+        return {}
+
+
+def get_vacancies():
+    try:
+        return vacancies_list
+    except Exception:
+        return {}
+
+
+def get_types():
+    try:
+        return types_dict
+    except Exception:
+        return {}
+
+
 @app.get("/", response_class=HTMLResponse)
-async def index(request: Request):
-    hashtags = []
-    vacancies = dict(itertools.islice(dbd.items(), 5))
-    categories = dict(itertools.islice(cat.items(), 5))
-    tags = [t for vac in dbd.values() for t in vac['hashtags']][:5]
+async def index(
+        request: Request,
+        category: Dict = Depends(get_categories),
+        vacancies: Dict = Depends(get_vacancies),
+        tags: Dict = Depends(get_tags_list),
+        types: List = Depends(get_types)
+):
     context = {
         "request": request,
         "vacancies": vacancies,
-        "categories": categories,
+        "categories": category,
+        "types": types,
         'tags': sorted(tags),
     }
 
@@ -343,5 +412,84 @@ async def index(request: Request):
         "index.html",
         context=context
     )
+
+
+@app.get("/catalog", response_class=HTMLResponse)
+async def catalog(
+        request: Request,
+        query: Optional[str] = None,
+        category: Dict = Depends(get_categories_list),
+        vacancies: Dict = Depends(get_vacancies_list),
+        tags: Dict = Depends(get_tags_list),
+        types: List = Depends(get_typies_list)
+):
+    context = {
+        "request": request,
+        "vacancies": vacancies,
+        "categories": category,
+        "types": types,
+        'tags': sorted(tags[:5]),
+    }
+    if query:
+        q = query.lower().strip()
+        vacancies = dict((k,v) for k,v in vacancies.items() if q in v['vacancy'].lower())
+        context.update({"vacancies": vacancies, 'message': f'вакансии по запросу "{q}"'})
+    return templates.TemplateResponse(
+        "catalog.html",
+        context=context
+    )
+
+
+@app.get("/catalog/?category={category}", response_class=HTMLResponse)
+async def catalog(
+        request: Request,
+        category: Dict = Depends(get_categories_list),
+        vacancies: Dict = Depends(get_vacancies_list),
+        tags: Dict = Depends(get_tags_list),
+        types: List = Depends(get_typies_list)
+):
+    context = {
+        "request": request,
+        "vacancies": vacancies,
+        "categories": category,
+        "types": types,
+        'tags': sorted(tags[:5]),
+    }
+
+    return templates.TemplateResponse(
+        "catalog.html",
+        context=context
+    )
+
+
+@app.get("/vacancy/{slug}/", response_class=HTMLResponse)
+async def vacancy(
+        request: Request,
+        slug: str,
+        category: Dict = Depends(get_categories_list),
+):
+    vacancies = vacancies_list[slug]
+    context = {
+        "request": request,
+        "vacancy": vacancies,
+        "categories": category,
+    }
+    return templates.TemplateResponse(
+        "vacancy.html",
+        context=context
+    )
+
+
+@app.get("/search/", response_class=JSONResponse)
+async def vacancy(query: str) -> Dict[str, List]:
+    q = query.lower().strip()
+    res = [
+        (v['vacancy'], v['slug'], v['salary'])
+        for k, v in vacancies_list.items()
+        if q in v['vacancy'].lower() or q in [tag for tag in v['hashtags']]
+    ]
+    return {'vacancy': res}
+
+
 if __name__ == '__main__':
     uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)

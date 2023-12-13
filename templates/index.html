@@ -4,20 +4,33 @@
 {% endblock %}
 
 {% block content %}
-<section class="section__search">
-    <form class="row g-3 ">
+<section class="section__search ">
+    <form class="row g-3 " action="{{ url_for('catalog')}}" method="GET">
         <div class="col-lg-6 offset-lg-2 col-8">
-            <label for="searchString" class="visually-hidden">поиск</label>
+
+            <label for="search_box" class="visually-hidden">поиск</label>
             <input style="border: 3px solid var(--one-color);"
                    type="text" class="form-control form-control-lg"
-                   id="searchString"
+                   name="query" id="search_box" value=""
                    placeholder="поиск вакансии в Омске">
+            <div id="search_advice_wrapper"></div>
         </div>
         <div class="col-lg-4 col-2">
             <button type="submit" class="btn btn__mine btn__color  btn-lg mb-3 px-5">поиск</button>
         </div>
     </form>
+
 </section>
+<!--<section class="section__search col-lg-6 offset-lg-2 col-8">-->
+
+<!--	<div class="search_area ">-->
+<!--		<form action="" method="GET">-->
+<!--			<input type="text" name="query" id="search_box" value="" autocomplete="off">-->
+<!--			<input type="submit" value="Поиск">-->
+<!--		</form>-->
+<!--		<div id="search_advice_wrapper"></div>-->
+<!--	</div>-->
+<!--</section>-->
 <section style="width:100%;background-color:var(--two-color);padding-bottom:40px;padding-top:40px;">
     <div class="container">
         <div class="row d-flex justify-content-center">
@@ -25,14 +38,14 @@
                 <div class="card card__mine m-1" style="width:100%; background-color:var(--one-color)" >
                     <div class="card-body">
                         <h5 class="card-title" style="float:left;">Свежие вакансии</h5>
-
                         <p class="card-text"></p>
                     </div>
                     <ul class="list-group list-group-flush">
                         {% for k, v in vacancies.items() %}
                             <li class="list-group-item">
-                                <span style="float:left;">{{ v.vacancy }}</span>
-                                <span style=" float:right;">{{ v.salary }}</span>
+                                <a href="{{ url_for('vacancy', slug=v.slug) }}"
+                                   style="color:var(--three-color);float:left; text-decoration-line: none;">{{ v.vacancy }}</a>
+                                <span style="float:right;">{{ v.salary }}</span>
                             </li>
                         {% endfor %}
                     </ul>
@@ -87,11 +100,11 @@
                         <h5 class="card-title" style="float:left;">по категориям</h5>
                         <p class="card-text"></p>
                     </div>
-                    <ul class="list-group list-group-flush">
-                        {% for index, cat in categories.items() %}
-                        <li class="list-group-item">
-                            <span style="float:left;">  {{ cat }}</span>
-                            <span style=" float:right;">10</span>
+                    <ul class="list-group">
+                        {% for index, cat in types.items() %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            {{ cat }}
+                            <span class="badge bg-secondary rounded-pill">14</span>
                         </li>
                         {% endfor %}
                     </ul>
@@ -100,6 +113,7 @@
                     </div>
                 </div>
             </div>
+
             <div class="col-lg-4  col-md-6 col-12">
                 <div class="card card__mine m-1" style="color:#000; width:100%; background-color:var(--four-color)">
                     <div class="card-body">
@@ -107,9 +121,10 @@
                         <p class="card-text"></p>
                     </div>
                     <ul class="list-group list-group-flush">
-                        {% for tag in tags %}
-                        <li class="list-group-item">
-                           <a href="#" class="card-link ">#&nbsp;{{tag}}&nbsp;</a>
+                        {% for  ind, cat  in categories.items() %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            {{ cat }}
+                            <span class="badge bg-warning rounded-pill">14</span>
                         </li>
                         {% endfor %}
                     </ul>
@@ -118,6 +133,7 @@
                     </div>
                 </div>
             </div>
+
             <div class="col-lg-3  col-md-6 col-12">
                 <div class="card card__mine m-1" style="color:#fff; width:100%; background-color:var(--one-color)">
                     <div class="card-body">

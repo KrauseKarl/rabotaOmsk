@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+{% block title %}
+
+{% endblock %}
+
+{% block content %}
+<section style="width:100%;background-color:var(--two-color);padding-bottom:40px;padding-top:40px;">
+
+    <div class="container">
+        <div class="row">
+            <div class="col-12 my-3">
+                 <h1>{{ vacancy.vacancy }}</h1>
+            </div>
+        </div>
+
+        <div class="row d-flex justify-content-evenly">
+            <div class="col-lg-4 col-12">
+                <div class="card card__mine card_vacancy card__carousel m-1">
+                    <div class="card-body ">
+                        <h2 class="card-title card__vacancy__h">{{ vacancy.title }}</h2>
+                        <h5 class="text-muted">{{ vacancy.employer }}</h5>
+                    </div>
+
+                    <div class="card-body " style="float:left;">
+                        {% for key, vac in vacancy.items() if key in ['salary', 'experience', 'time_table',
+                        'shift'] %}
+                        {% if vac %}
+                        <h4>{{ vac }}</h4>
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-lg-8 col-12">
+                <div class="col-12">
+                <div class="card  card__mine card_vacancy card__carousel m-1">
+                    <div class="card-body">
+                        <h2 class="card-title card__vacancy__h" style="float:left;">Описание</h2>
+                    </div>
+                    <div class="card-body">{% if vacancy.description %}
+                        <p class="card-text"> {{ vacancy.description }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+                <div class="col-12">
+                <div class="card  card__mine card_vacancy m-1">
+                    {% if vacancy.requirements %}
+                    <div class="card-body">
+                        <h2 class="card-title card__vacancy__h">требования</h2>
+                        <ul class="list-group">
+                            {% for adv in vacancy.requirements %}
+                            <p>&nbsp;-&nbsp;{{ adv }}</p>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+                    {% if vacancy.responsibility %}
+                    <div class="card-body">
+                        <h2 class="card-title card__vacancy__h">обязанности</h2>
+                        <div class="list-group">
+                            {% for adv in vacancy.responsibility %}
+                            <p>&nbsp;-&nbsp;{{ adv }}</p>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+                    <div class="card-body">
+                    </div>
+                </div>
+            </div>
+                <div class="col-12">
+                <div class="card  card__mine card_vacancy m-1">
+                    {% if vacancy.requirements %}
+                    <div class="card-body">
+                        <h2 class="card-title card__vacancy__h">преимущества</h2>
+                        <div class="list-group">
+                            {% for adv in vacancy.advantages %}
+                            <p>&nbsp;-&nbsp;{{ adv }}</p>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+                    <div class="card-body">
+                    </div>
+                </div>
+            </div>
+                <div class="col-12">
+                <div class="card  card__mine card_vacancy m-1">
+                    {% if vacancy.contacts %}
+                    <div class="card-body">
+                        <h2 class="card-title card__vacancy__h">контакты</h2>
+                        <div class="list-group">
+                            {% for obj in vacancy.contacts %}
+                            <p>&nbsp;&nbsp;{{ obj }}</p>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+                    <div class="card-body">
+                    </div>
+                </div>
+            </div>
+            </div>
+
+
+        </div>
+    </div>
+</section>
+
+{% endblock %}

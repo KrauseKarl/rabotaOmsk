@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% block title %}
+
+{% endblock %}
+
+{% block content %}
+<section style="width:100%;background-color:var(--two-color);padding-bottom:40px;padding-top:40px;">
+
+    <div class="container">
+        <div class="row">
+            <div class="col-12 my-3">
+                 <h1>{% if  message %}{{ message }} {% else %} Каталог{% endif %}</h1>
+            </div>
+        </div>
+
+        <div class="row d-flex justify-content-evenly">
+
+            <div class="col-lg-4 col-12">
+                <div class="card  card__mine card_vacancy m-1">
+
+                    <div class="card-body">
+                        <h2 class="card-title card__vacancy__h">тип занятости</h2>
+                        <div class="list-group">
+                            {% for ind, obj in types.items() %}
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="" id="{{ind}}">
+                                <label class="form-check-label" for="{{ind}}">  {{ obj }}
+                                </label>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+
+                    <div class="card-body">
+                        <h2 class="card-title card__vacancy__h">специализация</h2>
+                        <div class="list-group">
+                            {% for ind, obj in categories.items() %}
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="" id="cat_{{ind}}">
+                                <label class="form-check-label" for="cat_{{ind}}">  {{ obj }}
+                                </label>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="card-body">
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-8 col-12">
+                <div class="col-12">
+                    {% for ind, obj in vacancies.items() %}
+                    <div class="card  card__mine card_vacancy  m-1">
+                        <div class="card-body">
+                            <h4 class="card-title " style="float:right;">
+                                <a class="catalog__link" href="{{ url_for('vacancy', slug=obj.slug)}}">{{ obj.vacancy
+                                    }}</a></h4>
+                            <h5>{{ obj.salary }} </h5>
+                        </div>
+                        <div class="card-body">
+
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+
+            </div>
+
+
+        </div>
+    </div>
+</section>
+
+{% endblock %}

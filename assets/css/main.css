@@ -53,6 +53,8 @@ section.section__search {
     -webkit-box-shadow: 0px 5px 10px 2px rgba(34, 60, 80, 0.2);
     -moz-box-shadow: 0px 5px 10px 2px rgba(34, 60, 80, 0.2);
     box-shadow: 0px 5px 10px 2px rgba(34, 60, 80, 0.2);
+     position: relative;
+
 
 }
 .navbar-mine {
@@ -106,12 +108,20 @@ section.section__search {
     -moz-box-shadow: 0px 5px 10px 2px rgba(34, 60, 80, 0.2);
     box-shadow: 0px 5px 10px 2px rgba(34, 60, 80, 0.2);
 }
+.card__mine.card_vacancy {
+      padding:20px;
+}
+.card__vacancy__h {
+      border-bottom: 3px solid var(--one-color);
+      padding-bottom:10px;
+      margin-bottom:20px;
+}
 footer {
     padding-right: 80px;
     padding-left: 80px;
 }
 .card-link {
-    text-decoration-line: none;
+   c
     color:#000;
 
 }
@@ -136,4 +146,78 @@ footer {
 }
 .card__carousel {
     height:310px;
+}
+.catalog__link {
+    text-decoration-line: none;
+    border-bottom: 2px solid var(--one-color);
+    color:#000;
+}
+.catalog__link:hover {
+     border-bottom: 2px solid var(--four-color);
+}
+
+/* */
+.search_area {
+    /* width: 350px; */
+    margin: 0px;
+    position: relative;
+}
+
+#search_box{
+    /* width:200px; */
+    padding:2px;
+    margin:1px;
+    border:1px solid #000;
+}
+
+#search_advice_wrapper {
+    display:none;
+    width: 100%;
+    padding: 15px;
+    color:var(--three-color);
+    font-weight:500;
+    background-color:var(--four-color);
+    -moz-opacity: 0.95;
+    opacity: 0.95;
+    -ms-filter:"progid:DXImageTransform.Microsoft.Alpha"(Opacity=95);
+    filter: progid:DXImageTransform.Microsoft.Alpha(opacity=95);
+    filter:alpha(opacity=95);
+    z-index:999;
+    position: relative;
+}
+
+#search_advice_wrapper .advice_variant {
+    cursor: pointer;
+    text-align: left;
+    text-decoration-line: none;
+    color:var(--three-color);
+}
+#search_advice_wrapper .advice_variant a {
+    text-decoration-line: none;
+    color:var(--three-color);
+}
+#search_advice_wrapper .advice_variant:hover,
+#search_advice_wrapper .advice_variant a:hover  {
+    color:var(--four-color);
+    background-color:var(--three-color);
+}
+
+#search_advice_wrapper .active{
+    cursor: pointer;
+    padding: 5px;
+    color:var(--three-color);
+    background-color:var(--four-color);
+}
+.btn__clean {
+
+    text-align:right;
+    color: grey;
+    opacity:0.5;
+    padding: 5px;
+}
+.btn__clean:hover,
+.btn__clean:active {
+    cursor: pointer;
+    color: black;
+    opacity:0.9;
 }
