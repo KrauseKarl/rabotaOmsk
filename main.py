@@ -1,16 +1,21 @@
 import itertools
 import locale
 from re import search
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Annotated
 
 import uvicorn
 from fastapi import FastAPI, Request, Depends
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy.orm import Session
 from starlette.middleware.sessions import SessionMiddleware
 from starlette.middleware.trustedhost import TrustedHostMiddleware
 from starlette.templating import Jinja2Templates
+
+import models
+from database import Base, engine, SessionLocal
+from schemas import VacancyModel
 
 locale.setlocale(category=locale.LC_ALL, locale="ru_RU.UTF-8")
 vacancies_list = {
@@ -302,10 +307,11 @@ vacancies_list = {
 }
 types_dict = {
     "1": "полная занятость",
-    "2": "частичная занятость",
-    "3": "вахтовый метод",
-    "4": "для студентов",
-    "5": "удаленная",
+    "2": "неполный день",
+    "3": "частичная занятость",
+    "4": "вахтовый метод",
+    "5": "для студентов",
+    "6": "удаленная",
 }
 categories_dict = {
     "1": "менеджер по продажам",
@@ -315,6 +321,24 @@ categories_dict = {
     "5": "администратор",
     "6": "дизайнер, художник"
 }
+
+
+def create_tables():
+    print("Creating Tables..")
+    Base.metadata.create_all(bind=engine)
+
+
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+
+db_dependency = Annotated[Session, Depends(get_db)]
+models.Base.metadata.create_all(bind=engine)
+
 
 app = FastAPI()
 # app.include_router(catalog.router)
@@ -432,7 +456,7 @@ async def catalog(
     }
     if query:
         q = query.lower().strip()
-        vacancies = dict((k,v) for k,v in vacancies.items() if q in v['vacancy'].lower())
+        vacancies = dict((k, v) for k, v in vacancies.items() if q in v['vacancy'].lower())
         context.update({"vacancies": vacancies, 'message': f'вакансии по запросу "{q}"'})
     return templates.TemplateResponse(
         "catalog.html",
@@ -490,6 +514,20 @@ async def vacancy(query: str) -> Dict[str, List]:
     ]
     return {'vacancy': res}
 
+
+@app.post("/vacancies/", response_model=VacancyModel)
+async def create_transaction(transaction: VacancyModel, db: db_dependency):
+    new_vacancy = models.Vacancy(**transaction.model_dump())
+    db.add(new_vacancy)
+    db.commit()
+    db.refresh(new_vacancy)
+    return new_vacancy
+
+
+@app.get("/vacancies/", response_model=List[VacancyModel,])
+async def read_transaction(db: db_dependency, skip: int = 0, limit: int = 100):
+    vacancies = db.query(models.Vacancy).offset(skip).limit(limit).all()
+    return vacancies
 
 if __name__ == '__main__':
     uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)

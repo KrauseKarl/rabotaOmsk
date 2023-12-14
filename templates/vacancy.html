@@ -34,77 +34,77 @@
             </div>
             <div class="col-lg-8 col-12">
                 <div class="col-12">
-                <div class="card  card__mine card_vacancy card__carousel m-1">
-                    <div class="card-body">
-                        <h2 class="card-title card__vacancy__h" style="float:left;">Описание</h2>
+                    {% if vacancy.description %}
+                    <div class="card  card__mine card_vacancy card__carousel m-1">
+                        <div class="card-body">
+                            <h2 class="card-title card__vacancy__h" style="float:left;">Описание</h2>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text"> {{ vacancy.description }}</p>
+
+                        </div>
                     </div>
-                    <div class="card-body">{% if vacancy.description %}
-                        <p class="card-text"> {{ vacancy.description }}</p>
+                    {% endif %}
+                </div>
+                <div class="col-12">
+                    {% if vacancy.requirements or vacancy.responsibility %}
+                    <div class="card  card__mine card_vacancy m-1">
+                        {% if vacancy.requirements %}
+                            <div class="card-body">
+                            <h2 class="card-title card__vacancy__h">требования</h2>
+                            <ul class="list-group">
+                                {% for adv in vacancy.requirements %}
+                                <li>&nbsp;-&nbsp;{{ adv }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        {% endif %}
+
+                        {% if vacancy.responsibility %}
+                            <div class="card-body">
+                            <h2 class="card-title card__vacancy__h">обязанности</h2>
+                            <div class="list-group">
+                                {% for adv in vacancy.responsibility %}
+                                <p>&nbsp;-&nbsp;{{ adv }}</p>
+                                {% endfor %}
+                            </div>
+                        </div>
+                            <div class="card-body"></div>
                         {% endif %}
                     </div>
+                    {% endif %}
                 </div>
-            </div>
                 <div class="col-12">
-                <div class="card  card__mine card_vacancy m-1">
                     {% if vacancy.requirements %}
-                    <div class="card-body">
-                        <h2 class="card-title card__vacancy__h">требования</h2>
-                        <ul class="list-group">
-                            {% for adv in vacancy.requirements %}
-                            <p>&nbsp;-&nbsp;{{ adv }}</p>
-                            {% endfor %}
-                        </ul>
-                    </div>
-                    {% endif %}
-                    {% if vacancy.responsibility %}
-                    <div class="card-body">
-                        <h2 class="card-title card__vacancy__h">обязанности</h2>
-                        <div class="list-group">
-                            {% for adv in vacancy.responsibility %}
-                            <p>&nbsp;-&nbsp;{{ adv }}</p>
-                            {% endfor %}
+                    <div class="card  card__mine card_vacancy m-1">
+                        <div class="card-body">
+                            <h2 class="card-title card__vacancy__h">преимущества</h2>
+                            <div class="list-group">
+                                {% for adv in vacancy.advantages %}
+                                <p>&nbsp;-&nbsp;{{ adv }}</p>
+                                {% endfor %}
+                            </div>
                         </div>
+                        <div class="card-body"></div>
                     </div>
                     {% endif %}
-                    <div class="card-body">
-                    </div>
                 </div>
-            </div>
                 <div class="col-12">
-                <div class="card  card__mine card_vacancy m-1">
-                    {% if vacancy.requirements %}
-                    <div class="card-body">
-                        <h2 class="card-title card__vacancy__h">преимущества</h2>
-                        <div class="list-group">
-                            {% for adv in vacancy.advantages %}
-                            <p>&nbsp;-&nbsp;{{ adv }}</p>
-                            {% endfor %}
-                        </div>
-                    </div>
-                    {% endif %}
-                    <div class="card-body">
-                    </div>
-                </div>
-            </div>
-                <div class="col-12">
-                <div class="card  card__mine card_vacancy m-1">
                     {% if vacancy.contacts %}
-                    <div class="card-body">
-                        <h2 class="card-title card__vacancy__h">контакты</h2>
-                        <div class="list-group">
-                            {% for obj in vacancy.contacts %}
-                            <p>&nbsp;&nbsp;{{ obj }}</p>
-                            {% endfor %}
+                    <div class="card  card__mine card_vacancy m-1">
+                        <div class="card-body">
+                            <h2 class="card-title card__vacancy__h">контакты</h2>
+                            <div class="list-group">
+                                {% for obj in vacancy.contacts %}
+                                <p>&nbsp;&nbsp;{{ obj }}</p>
+                                {% endfor %}
+                            </div>
                         </div>
+                        <div class="card-body"></div>
                     </div>
                     {% endif %}
-                    <div class="card-body">
-                    </div>
                 </div>
             </div>
-            </div>
-
-
         </div>
     </div>
 </section>
