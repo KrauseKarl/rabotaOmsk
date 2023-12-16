@@ -49,7 +49,7 @@ class Vacancy(Base):
     ]
     EXPERIENCE = [
         ('no_matter', 'Не имеет значения'),
-        ('without', 'Нет     опыта'),
+        ('without', 'Нет опыта'),
         ('one_to_three', 'От 1 года до 3 лет'),
         ('three_to_six', 'От 3 лет до 6 лет'),
         ('above_six', 'Более 6 лет')
@@ -63,21 +63,30 @@ class Vacancy(Base):
     ]
 
     id = Column(Integer, primary_key=True, index=True)
-    title = Column(String(length=64), comment='полное название вакансии')
-    name = Column(String(length=64), comment='название вакансии')
-    salary = Column(String(length=64), comment='зарплата')
+    # GENERAL
+    title = Column(String(length=64), comment='полное название вакансии', nullable=False)
+    name = Column(String(length=64), comment='название вакансии', nullable=False)
+    salary = Column(String(length=64), comment='зарплата', nullable=False)
+    speciality = Column(String(length=64), comment='специальность', nullable=False)
+    categories = Column(String(length=64), comment='категория', nullable=False)
     description = Column(Text, comment='описание', nullable=True)
-    created_at = Column(DateTime, default=datetime.now, comment='дата публикации')
-    is_active = Column(Boolean, default=True, comment='активная')
+    # EMPLOYER
     employer = Column(String(length=64), comment='работодатель', nullable=True)
-    contacts = Column(String(length=64), comment='контакты', nullable=True)
-
+    employer_site = Column(String(length=64), comment='сайт работодателя', nullable=True)
+    employer_vk = Column(String(length=64), comment='VK работодателя', nullable=True)
+    employer_instagram = Column(String(length=64), comment='Instagram работодателя', nullable=True)
+    # SELECTED
     types = Column(ChoiceType(TYPES), comment='тип занятости', nullable=True)
     experience = Column(ChoiceType(EXPERIENCE), comment='опыт работы', nullable=True)
     schedule = Column(ChoiceType(SCHEDULE), comment='режим работы', nullable=True)
-
-    tags = relationship('Tag', secondary=tagging, backref='vacancies')
-    categories = relationship('Category', secondary=classify, backref='vacancies')
+    # ManyToMany
+    # tags = relationship('Tag', secondary=tagging, backref='vacancies')
+    # categories = relationship('Category', secondary=classify, backref='vacancies')
+    # AUTO CREATED
+    created_at = Column(DateTime, default=datetime.now, comment='дата публикации')
+    # BOOLEAN
+    is_active = Column(Boolean, default=True, comment='активная')
+    responsibility = orm.relationship("Responsibility", back_populates="vacancy")
 
 
 class Tag(Base):
@@ -94,7 +103,8 @@ class Category(Base):
     __tablename__ = 'category'
 
     id = Column(Integer, primary_key=True)
-    title = Column(String(100), unique=True, nullable=False)
+    title = Column(String(100), unique=True, nullable=False,comment='сфера деятельности')
+    slug = Column(String(100), unique=True, nullable=False)
 
     def __init__(self, title=None):
         self.title = title
@@ -107,7 +117,7 @@ class Responsibility(Base):
     body = Column(String(255))
     vacancy_id = Column(Integer, ForeignKey('vacancy.id'))
 
-    vacancy = orm.relationship(Vacancy)
+    vacancy = orm.relationship("Vacancy", back_populates="responsibility")
 
 
 class Advantages(Base):
@@ -116,7 +126,6 @@ class Advantages(Base):
     id = Column(Integer, primary_key=True)
     body = Column(String(255))
     vacancy_id = Column(Integer, ForeignKey('vacancy.id'))
-
     vacancy = orm.relationship(Vacancy)
 
 
@@ -126,8 +135,7 @@ class Requirements(Base):
     id = Column(Integer, primary_key=True)
     body = Column(String(255))
     vacancy_id = Column(Integer, ForeignKey('vacancy.id'))
-
-    vacancy = orm.relationship(Vacancy)
+    vacancy = orm.relationship("Vacancy", backref='requirements')
 
 # class User(Base):
 #     TYPES = [
@@ -194,6 +202,7 @@ class Requirements(Base):
 #
 # class Child(Base):
 #     __tablename__ = 'child'
+
 #     id = Column(Integer, primary_key=True)
 #     name = Column(String)
 #     parent_id = Column(Integer, ForeignKey('parent.id'))

@@ -1,0 +1,13 @@
+<div class="col-12">
+    {% for ind, obj in vacancies.items() %}
+    <div class="card  card__mine card_vacancy  m-1">
+        <div class="card-body">
+            <h4 class="card-title " style="float:right;">
+                <a class="catalog__link" href="{{ url_for('vacancy', slug=obj.slug)}}">{{ obj.vacancy }}</a></h4>
+            <h5>{{ obj.salary }} </h5>
+        </div>
+        <div class="card-body">
+        </div>
+    </div>
+    {% endfor %}
+</div>

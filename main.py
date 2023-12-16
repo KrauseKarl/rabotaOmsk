@@ -1,10 +1,9 @@
 import itertools
 import locale
-from re import search
 from typing import Dict, List, Optional, Annotated
 
 import uvicorn
-from fastapi import FastAPI, Request, Depends
+from fastapi import FastAPI, Request, Depends, Form
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
@@ -15,17 +14,18 @@ from starlette.templating import Jinja2Templates
 
 import models
 from database import Base, engine, SessionLocal
-from schemas import VacancyModel
+import schemas as sch
 
 locale.setlocale(category=locale.LC_ALL, locale="ru_RU.UTF-8")
 vacancies_list = {
     "parikmaher": {
         "slug": "parikmaher",
+        "title": "Парикмахер",
         "vacancy": "Парикмахер",
         "salary": " от 40 до 70 тыс.",
-        "experience": "без опыта",
-        "time_table": " с 9 до 20",
-        "shift": " сменный график",
+        "experience": "full_time",
+        "type": "no_matter",
+        "schedule": "week",
         "description":
             """
             Парикмахер Парикмахер-универсал
@@ -50,8 +50,9 @@ vacancies_list = {
         "vacancy": "Вакансия мастер маникюра",
         "title": "Мастер маникюра",
         "salary": " от 40 до 70 тыс.",
-        "experience": "без опыта",
-        "time_table": " с 9 до 20",
+        "experience": "full_time",
+        "type": "no_matter",
+        "schedule": "shifts",
         "shift": None,
         "employer": "NikeNagel",
         "contacts": ["+7(900) 800-70-69", "emploer@mai.com", ],
@@ -79,9 +80,11 @@ vacancies_list = {
     "administrator": {
         "slug": "administrator",
         "vacancy": "Администратор",
+        "title": "Администратор",
         "salary": " от 30 до 60 тыс.",
-        "experience": "без опыта",
-        "time_table": " с 9 до 20",
+        "experience": "full_time",
+        "type": "no_matter",
+        "schedule": "week",
         "shift": " сменный график",
         "description":
             """
@@ -106,10 +109,12 @@ vacancies_list = {
     },
     "master-po-narashchivaniyu-resnic": {
         "slug": "master-po-narashchivaniyu-resnic",
+        "title": "Мастер по наращиванию ресниц",
         "vacancy": "Мастер по наращиванию ресниц",
         "salary": " от 30 до 60 тыс.",
-        "experience": "без опыта",
-        "time_table": " с 9 до 20",
+        "experience": "for_teenager",
+        "type": "one_to_three",
+        "schedule": "flexible",
         "shift": " сменный график",
         "description":
             """
@@ -135,9 +140,11 @@ vacancies_list = {
     "master-epilyacii-LPG-massazh-sovmeshchennyj": {
         "slug": "master-epilyacii-LPG-massazh-sovmeshchennyj",
         "vacancy": "Мастер эпиляции-LPG массаж совмещенный",
+        "title": "Мастер эпиляции-LPG массаж совмещенный",
         "salary": " от 30 до 60 тыс.",
-        "experience": "без опыта",
-        "time_table": " с 9 до 20",
+        "experience": "3",
+        "type": "1",
+        "schedule": "1",
         "shift": " сменный график",
         "description":
             """
@@ -165,10 +172,12 @@ vacancies_list = {
     },
     "nyanya": {
         "slug": "nyanya",
+        "title": "Няня",
         "vacancy": "Няня",
         "salary": " от 20 до 50 тыс.",
-        "experience": "без опыта",
-        # "time_table": " с 9 до 20",
+        "experience": "",
+        "type": "",
+        "schedule": "",
         "shift": "гибкий график",
         "description":
             """
@@ -198,9 +207,11 @@ vacancies_list = {
     "promouter": {
         "slug": "promouter",
         "vacancy": "Промоутер",
+        "title": "Промоутер",
         "salary": " 200 - 400 час",
-        "experience": "без опыта",
-        "time_table": " 3-5 час  утром или вечером",
+        "experience": "for_teenager",
+        "type": "one_to_three",
+        "schedule": "flexible",
         "shift": "гибкий график",
         "description":
             """
@@ -229,10 +240,12 @@ vacancies_list = {
     "torgovye-predstavitel": {
         "slug": "torgovye-predstavitel",
         "vacancy": "Торговые представитель",
+        "title": "Торговые представитель",
         "salary": " от 60 до 120 тыс.",
         # "experience": "без опыта",
-        "time_table": " с 9 до 20",
-        "shift": "график 5/2",
+        "experience": "partly_time",
+        "type": "one_to_three",
+        "schedule": "week",
         "description":
             """
             Продвижение бренда  Nika Nagel,
@@ -254,10 +267,12 @@ vacancies_list = {
     },
     "uborshchica": {
         "slug": "uborshchica",
+        "title": "Уборщица",
         "vacancy": "Уборщица",
         "salary": "договорная",
-        "experience": "без опыта",
-        "time_table": "с 9 до 20",
+        "experience": "partly_time",
+        "type": "one_to_three",
+        "schedule": "week",
         "shift": "график 5/2",
         "description":
             """
@@ -283,9 +298,11 @@ vacancies_list = {
     "uchenik-mastera-manikyura": {
         "slug": "uchenik-mastera-manikyura",
         "vacancy": "Ученик мастера маникюра",
+        "title": "Ученик мастера маникюра",
         "salary": " от 30 до 60 тыс.",
-        "experience": "без опыта",
-        # "time_table": "с 9 до 20",
+        "experience": "partly_time",
+        "type": "one_to_three",
+        "schedule": "week",
         "shift": " сменный график",
         "description":
             """
@@ -301,18 +318,17 @@ vacancies_list = {
             "обучение",
             "бесплатное",
             "мастре маникюра",
-
         ],
     },
 }
 types_dict = {
-    "1": "полная занятость",
-    "2": "неполный день",
-    "3": "частичная занятость",
-    "4": "вахтовый метод",
-    "5": "для студентов",
-    "6": "удаленная",
+    "full_time": "Полная занятость",
+    "partly_time": "Частичная занятость",
+    "for_teenager": "Стажировка",
+    "for_student": "Проектная работа",
+    "for_mam": "Волонтерство",
 }
+
 categories_dict = {
     "1": "менеджер по продажам",
     "2": "строитель",
@@ -320,6 +336,20 @@ categories_dict = {
     "4": "промоутер",
     "5": "администратор",
     "6": "дизайнер, художник"
+}
+experience_dict = {
+    "no_matter": "Не имеет значения",
+    "without": "Нет опыта",
+    "one_to_three": "От 1 года до 3 лет",
+    "three_to_six": "От 3 до 6 лет",
+    "above_six": "Более 6 лет",
+}
+schedule_dict = {
+    "shifts": "Сменный график  (2/2)",
+    "week": "Полный день (5/2)",
+    "flexible": "Гибкий график",
+    "remote": "Удаленная работа",
+    "rotations": "Вахтовый метод"
 }
 
 
@@ -338,7 +368,6 @@ def get_db():
 
 db_dependency = Annotated[Session, Depends(get_db)]
 models.Base.metadata.create_all(bind=engine)
-
 
 app = FastAPI()
 # app.include_router(catalog.router)
@@ -402,6 +431,13 @@ def get_categories():
         return {}
 
 
+def get_schedule():
+    try:
+        return schedule_dict
+    except Exception:
+        return {}
+
+
 def get_vacancies():
     try:
         return vacancies_list
@@ -445,7 +481,8 @@ async def catalog(
         category: Dict = Depends(get_categories_list),
         vacancies: Dict = Depends(get_vacancies_list),
         tags: Dict = Depends(get_tags_list),
-        types: List = Depends(get_typies_list)
+        types: List = Depends(get_typies_list),
+        schedule: Dict = Depends(get_schedule)
 ):
     context = {
         "request": request,
@@ -453,6 +490,7 @@ async def catalog(
         "categories": category,
         "types": types,
         'tags': sorted(tags[:5]),
+        'schedule_dict': schedule,
     }
     if query:
         q = query.lower().strip()
@@ -470,7 +508,8 @@ async def catalog(
         category: Dict = Depends(get_categories_list),
         vacancies: Dict = Depends(get_vacancies_list),
         tags: Dict = Depends(get_tags_list),
-        types: List = Depends(get_typies_list)
+        types: Dict = Depends(get_types),
+        schedule: Dict = Depends(get_schedule)
 ):
     context = {
         "request": request,
@@ -478,6 +517,7 @@ async def catalog(
         "categories": category,
         "types": types,
         'tags': sorted(tags[:5]),
+        'schedule_dict': schedule,
     }
 
     return templates.TemplateResponse(
@@ -515,19 +555,66 @@ async def vacancy(query: str) -> Dict[str, List]:
     return {'vacancy': res}
 
 
-@app.post("/vacancies/", response_model=VacancyModel)
-async def create_transaction(transaction: VacancyModel, db: db_dependency):
-    new_vacancy = models.Vacancy(**transaction.model_dump())
+# , vac: VacancyModel, db: db_dependency
+@app.get("/add_vacancies/", response_model=sch.VacancyModel)
+async def create_transaction(
+        request: Request,
+        category: Dict = Depends(get_categories_list),
+):
+    return templates.TemplateResponse(
+        "add_vacancy.html",
+        context={
+            'request': request,
+            "categories": category,
+        }
+    )
+
+
+@app.post("/add/", response_class=JSONResponse)
+async def create_vacancies(
+        db: db_dependency,
+        data: sch.VacancyBase = Depends(sch.VacancyBase.as_form),
+        res: sch.ResponsibilityBase = Depends(sch.ResponsibilityBase.as_form)
+
+):
+    print('***** res', res)
+    new_vacancy = models.Vacancy(**data.model_dump())
+    res_list = [models.Responsibility(body=r, vacancy_id=new_vacancy.id) for r in res]
+
     db.add(new_vacancy)
+    db.add_all(res_list)
     db.commit()
+    new_vacancy.responsibility.append(res_list)
     db.refresh(new_vacancy)
-    return new_vacancy
+
+    return {"msg": new_vacancy}
 
 
-@app.get("/vacancies/", response_model=List[VacancyModel,])
+@app.get("/vacancies/", response_model=List[sch.VacancyModel,])
 async def read_transaction(db: db_dependency, skip: int = 0, limit: int = 100):
     vacancies = db.query(models.Vacancy).offset(skip).limit(limit).all()
     return vacancies
+
+
+@app.get("/filter/", response_class=JSONResponse)
+async def filter_catalog(
+        param: Optional[str] = None,
+        category: Dict = Depends(get_categories_list),
+        vacancies: Dict = Depends(get_vacancies_list),
+        schedule: Dict = Depends(get_schedule),
+        types: Dict = Depends(get_types),
+
+):
+    print(param)
+    if param:
+        vacancies = [val for key, val in vacancies.items() for k, i in val.items() if param == i]
+    return {
+        'result': vacancies,
+        "categories": category,
+        'schedule_dict': schedule,
+        'types': types
+    }
+
 
 if __name__ == '__main__':
     uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)

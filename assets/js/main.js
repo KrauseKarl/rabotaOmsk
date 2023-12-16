@@ -32,8 +32,7 @@ $(window).load(function(){
                         dataType: 'json',
                         data: queryString,
                         success: function (data) {
-                            console.log(data.vacancy)
-                            console.log(data.vacancy.length)
+
                             if(data.vacancy) {
                                 var list = data.vacancy;
 						        suggest_count = list.length;
@@ -133,3 +132,27 @@ function key_activate(n){
 		$("#search_box").val( input_initial_value );
 	}
 }
+$("input.form-check-input").on("change", function() {
+    var params = $(this).val();
+    var arr = $(this).is(":checked");
+    if(!arr) params = null;
+    console.log(params)
+    console.log(arr)
+    $.ajax({
+	url: '/filter/',
+	method: 'get',
+	data: {'param': params},
+	success: function(data){
+	    console.log(data.result);
+		$('#vacancies').html('')
+		var list = data.result
+		for(var i in list){
+            if(list[i] != ''){
+                // добавляем слою позиции
+                var html = '<div class="card  card__mine card_vacancy  m-1"><div class="card-body"><h5>' +  list[i]["title"] +'</h5><h6>'+  list[i]["schedule"] + list[i]["salary"] +'</h6></div></div>'
+                $('#vacancies').append(html);
+            }
+        }
+	    }
+    });
+})

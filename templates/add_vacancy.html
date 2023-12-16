@@ -1,0 +1,338 @@
+{% extends 'base.html' %}
+{% block title %}
+
+{% endblock %}
+
+{% block content %}
+<section style="width:100%;background-color:var(--four-color);padding-bottom:40px;padding-top:40px;">
+
+    <div class="container">
+        <div class="row">
+            <div class="col-12 my-3">
+                <h1>Новая вакансия</h1>
+            </div>
+        </div>
+
+        <div class="row d-flex justify-content-center">
+            <div class="col-12">
+
+                <form method="POST" action="{{ url_for('create_vacancies')}}"  enctype="multipart/form-data">
+                    <div class="row">
+                        <h2 class="display-5 mt-3 mb-3">Основные характеристики</h2>
+                        <div class="col-lg-6 col-12"
+                             style="border-radius:8px;padding:20px;background-color:var(--one-color)">
+                            <div class="mb-4">
+                                <input type="text" class="form-control form-control-lg" id="title" name="title"
+                                       placeholder="полное название вакансии">
+                            </div>
+                            <div class="mb-4">
+                                <input type="text" class="form-control form-control-lg" id="name" name="name"
+                                       placeholder="название вакансии">
+                            </div>
+                            <div class="mb-4">
+                                <input type="text" class="form-control form-control-lg" id="salary" name="salary"
+                                       placeholder="зарплата от 40 000 или 50 000 - 80 000">
+                            </div>
+                            <div class="form-check mb-4">
+                                <input class="form-check-input" name="is_active" type="checkbox" checked
+                                       id="is_active" value="True">
+                                <label class="form-check-label" for="is_active"> активная вакансия</label>
+                            </div>
+
+
+                        </div>
+
+                        <h2 class="display-5 mt-3 mb-3">Категория вакансии / отрасль</h2>
+                        <div class="col-12" style="border-radius:8px;padding:20px;background-color:var(--three-color)">
+                            <div class="form-floating mb-4">
+                                <select class="form-select" name="categories" id="categories"
+                                        aria-label="категория вакансии">
+                                    <option value="Безопасность">Безопасность
+                                    </option>
+                                    <option value="Высший">Высший и средний менеджмент
+                                    </option>
+                                    <option value="Добыча">Добыча сырья
+                                    </option>
+                                    <option value="Домашний">Домашний, обслуживающий персонал
+                                    </option>
+                                    <option value="Закупки">Закупки
+                                    </option>
+                                    <option value="Информационные">Информационные технологии
+                                    </option>
+                                    <option value="Искусство">Искусство, развлечения, массмедиа
+                                    </option>
+                                    <option value="Маркетинг">Маркетинг, реклама, PR
+                                    </option>
+                                    <option value="Медицина">Медицина, фармацевтика
+                                    </option>
+                                    <option value="Наука">Наука, образование
+                                    </option>
+                                    <option value="Продажи">Продажи, обслуживание клиентов
+                                    </option>
+                                    <option value="Производство">Производство, сервисное обслуживание
+                                    </option>
+                                    <option value="Рабочий">Рабочий персонал
+                                    </option>
+                                    <option value="Розничная">Розничная торговля
+                                    </option>
+                                    <option value="Сельское">Сельское хозяйство
+                                    </option>
+                                    <option value="Спортивные">Спортивные клубы, фитнес, салоны красоты
+                                    </option>
+                                    <option value="Стратегия">Стратегия, инвестиции, консалтинг
+                                    </option>
+                                    <option value="Страхование">Страхование
+                                    </option>
+                                    <option value="Строительство">Строительство, недвижимость
+                                    </option>
+                                    <option value="Транспорт">Транспорт, логистика, перевозки
+                                    </option>
+                                    <option value="Туризм">Туризм, гостиницы, рестораны
+                                    </option>
+                                    <option value="Управление">Управление персоналом, тренинги
+                                    </option>
+                                    <option value="Финансы">Финансы, бухгалтерия
+                                    </option>
+                                    <option value="Юристы">Юристы
+                                    </option>
+                                    <option value="Другое">Другое
+                                    </option>
+
+
+                                </select>
+                                <label for="types">Выберите тип занятости</label>
+                            </div>
+                            <div class="mb-4">
+                                <input type="text" class="form-control form-control-lg" id="speciality"
+                                       name="speciality"
+                                       placeholder="специальность">
+                            </div>
+
+                        </div>
+
+                        <h2 class="display-5 mt-3 mb-3">Дополнительные характеристики</h2>
+                        <div class="col-lg-6 col-12">
+                            <div class="form-floating mb-4">
+                                <select class="form-select" name="types" id="types"
+                                        aria-label="Floating label select example">
+                                    <option value="full_time">Полная занятость</option>
+                                    <option value="partly_time">Частичная занятость</option>
+                                    <option value="for_teenager">Работа для школьников</option>
+                                    <option value="for_student">Работа для студентов</option>
+                                    <option value="for_mam"> Работа в декрете</option>
+                                </select>
+                                <label for="types">Выберите тип занятости</label>
+                            </div>
+                            <div class="form-floating mb-4">
+                                <select class="form-select" name="experience" id="experience"
+                                        aria-label="Floating label select example">
+                                    <option value="no_matter">Не имеет значения</option>
+                                    <option value="without">Нет опыта</option>
+                                    <option value="one_to_three">От 1 года до 3 лет</option>
+                                    <option value="three_to_six">От 3 лет до 6 лет</option>
+                                    <option value="above_six">Более 6 лет</option>
+                                </select>
+                                <label for="experience">Выберите опыт работы</label>
+                            </div>
+                            <div class="form-floating mb-4">
+                                <select class="form-select" name="schedule" id="schedule"
+                                        aria-label="Floating label select example">
+                                    <option value="shifts">Сменный график (2/2)</option>
+                                    <option value="week">Полный день (5/2)</option>
+                                    <option value="flexible">Гибкий график</option>
+                                    <option value="remote">Удаленная работа</option>
+                                    <option value="rotations">Вахтовый метод</option>
+                                </select>
+                                <label for="schedule">Выберите график работы</label>
+                            </div>
+                        </div>
+
+                        <h2 class="display-5 mt-3 mb-3">Информация о работодателе</h2>
+                        <div class="col-lg-6 col-12"
+                             style="border-radius:8px;padding:20px;background-color:var(--two-color)">
+                            <div class="mb-4">
+                                <input type="text" class="form-control form-control-lg" id="employer"
+                                       name="employer"
+                                       placeholder="работодатель">
+                            </div>
+                            <div class="mb-4">
+                                <input type="text" class="form-control form-control-lg" id="employer_site"
+                                       name="employer_site"
+                                       placeholder="сайт работодателя">
+                            </div>
+                            <div class="mb-4">
+                                <input type="text" class="form-control form-control-lg" id="employer_vk"
+                                       name="employer_vk"
+                                       placeholder="группа в VK">
+                            </div>
+                            <div class="mb-4">
+                                <input type="text" class="form-control form-control-lg" id="employer_instagram"
+                                       name="employer_instagram"
+                                       placeholder="cтраница в Instagram">
+                            </div>
+                        </div>
+
+<!--                        <h2 class="display-5 mt-3 mb-3">Хештеги</h2>-->
+<!--                        <div class="col-12" style="border-radius:8px;padding:20px;background-color:var(&#45;&#45;three-color)">-->
+<!--                            <div class="row">-->
+<!--                                <div class="col-lg-6 col-md-6 col-12">-->
+<!--                                    <div class="mb-4">-->
+<!--                                        <input type="text" class="form-control form-control-lg" name="hashtag"-->
+<!--                                               placeholder="хештег">-->
+<!--                                    </div>-->
+<!--                                    <div class="mb-4">-->
+<!--                                        <input type="text" class="form-control form-control-lg" name="hashtag"-->
+<!--                                               placeholder="хештег">-->
+<!--                                    </div>-->
+<!--                                    <div class="mb-4">-->
+<!--                                        <input type="text" class="form-control form-control-lg" name="hashtag"-->
+<!--                                               placeholder="хештег">-->
+<!--                                    </div>-->
+<!--                                    <div class="mb-4">-->
+<!--                                        <input type="text" class="form-control form-control-lg" name="hashtag"-->
+<!--                                               placeholder="хештег">-->
+<!--                                    </div>-->
+<!--                                    <div class="mb-4">-->
+<!--                                        <input type="text" class="form-control form-control-lg" name="hashtag"-->
+<!--                                               placeholder="хештег">-->
+<!--                                    </div>-->
+<!--                                    <div class="mb-4">-->
+<!--                                        <input type="text" class="form-control form-control-lg" name="hashtag"-->
+<!--                                               placeholder="хештег">-->
+<!--                                    </div>-->
+<!--                                    <div class="mb-4">-->
+<!--                                        <input type="text" class="form-control form-control-lg" name="hashtag"-->
+<!--                                               placeholder="хештег">-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                                <div class="col-lg-6 col-md-6 col-12">-->
+<!--                                    <div class="mb-4">-->
+<!--                                        <input type="text" class="form-control form-control-lg" name="hashtag"-->
+<!--                                               placeholder="хештег">-->
+<!--                                    </div>-->
+<!--                                    <div class="mb-4">-->
+<!--                                        <input type="text" class="form-control form-control-lg" name="hashtag"-->
+<!--                                               placeholder="хештег">-->
+<!--                                    </div>-->
+<!--                                    <div class="mb-4">-->
+<!--                                        <input type="text" class="form-control form-control-lg" name="hashtag"-->
+<!--                                               placeholder="хештег">-->
+<!--                                    </div>-->
+<!--                                    <div class="mb-4">-->
+<!--                                        <input type="text" class="form-control form-control-lg" name="hashtag"-->
+<!--                                               placeholder="хештег">-->
+<!--                                    </div>-->
+<!--                                    <div class="mb-4">-->
+<!--                                        <input type="text" class="form-control form-control-lg" name="hashtag"-->
+<!--                                               placeholder="хештег">-->
+<!--                                    </div>-->
+<!--                                    <div class="mb-4">-->
+<!--                                        <input type="text" class="form-control form-control-lg" name="hashtag"-->
+<!--                                               placeholder="хештег">-->
+<!--                                    </div>-->
+<!--                                    <div class="mb-4">-->
+<!--                                        <input type="text" class="form-control form-control-lg" name="hashtag"-->
+<!--                                               placeholder="хештег">-->
+<!--                                    </div>-->
+<!--                                </div>-->
+
+<!--                            </div>-->
+<!--                        </div>-->
+
+                        <h2 class="display-5">Обязанности</h2>
+                        <div class="col-12">
+                            <ol class="list-group list-group-numbered">
+                                <li class="list-group-item">
+                                    <input type="text" class="form-control form-control-lg" name="responsibility">
+                                </li>
+                                <li class="list-group-item list-group-item-secondary">
+                                    <input type="text" class="form-control form-control-lg" name="responsibility">
+                                </li>
+                                <li class="list-group-item">
+                                    <input type="text" class="form-control form-control-lg" name="responsibility">
+                                </li>
+                                <li class="list-group-item list-group-item-secondary">
+                                    <input type="text" class="form-control form-control-lg" name="responsibility">
+                                </li>
+                                <li class="list-group-item">
+                                    <input type="text" class="form-control form-control-lg" name="responsibility">
+                                </li>
+                                <li class="list-group-item list-group-item-secondary">
+                                    <input type="text" class="form-control form-control-lg" name="responsibility">
+                                </li>
+
+                            </ol>
+                        </div>
+
+<!--                        <h2 class="display-5 mt-3 mb-3">Требования к соискателю</h2>-->
+<!--                        <div class="col-12" style="border-radius:8px;padding:20px;background-color:var(&#45;&#45;three-color)">-->
+<!--                            <ol class="list-group list-group-numbered">-->
+<!--                                <li class="list-group-item">-->
+<!--                                    <input type="text" class="form-control form-control-lg" name="requirements">-->
+<!--                                </li>-->
+<!--                                <li class="list-group-item list-group-item-secondary">-->
+<!--                                    <input type="text" class="form-control form-control-lg" name="requirements">-->
+<!--                                </li>-->
+<!--                                <li class="list-group-item">-->
+<!--                                    <input type="text" class="form-control form-control-lg" name="requirements">-->
+<!--                                </li>-->
+<!--                                <li class="list-group-item list-group-item-secondary">-->
+<!--                                    <input type="text" class="form-control form-control-lg" name="requirements">-->
+<!--                                </li>-->
+<!--                                <li class="list-group-item">-->
+<!--                                    <input type="text" class="form-control form-control-lg" name="requirements">-->
+<!--                                </li>-->
+<!--                                <li class="list-group-item list-group-item-secondary">-->
+<!--                                    <input type="text" class="form-control form-control-lg" name="requirements">-->
+<!--                                </li>-->
+<!--                            </ol>-->
+<!--                        </div>-->
+
+<!--                        <h2 class="display-5 mt-3 mb-3">Преимущества </h2>-->
+<!--                        <div class="col-12">-->
+<!--                            <ol class="list-group list-group-numbered">-->
+<!--                                <li class="list-group-item">-->
+<!--                                    <input type="text" class="form-control form-control-lg" name="advantages">-->
+<!--                                </li>-->
+<!--                                <li class="list-group-item list-group-item-secondary">-->
+<!--                                    <input type="text" class="form-control form-control-lg" name="advantages">-->
+<!--                                </li>-->
+<!--                                <li class="list-group-item">-->
+<!--                                    <input type="text" class="form-control form-control-lg" name="advantages">-->
+<!--                                </li>-->
+<!--                                <li class="list-group-item list-group-item-secondary">-->
+<!--                                    <input type="text" class="form-control form-control-lg" name="advantages">-->
+<!--                                </li>-->
+<!--                                <li class="list-group-item">-->
+<!--                                    <input type="text" class="form-control form-control-lg" name="advantages">-->
+<!--                                </li>-->
+<!--                                <li class="list-group-item list-group-item-secondary">-->
+<!--                                    <input type="text" class="form-control form-control-lg" name="advantages">-->
+<!--                                </li>-->
+<!--                            </ol>-->
+<!--                        </div>-->
+
+                        <h2 class="display-5 mb-3">Описание</h2>
+                        <div class="col-12" style="border-radius:8px;padding:20px;background-color:var(--three-color)">
+                            <div class="form-floating mb-4">
+                                <textarea class="form-control"
+                                          placeholder="Добавить описание вакансии ..."
+                                          id="description"
+                                          name="description"
+                                          style="height: 250px"></textarea>
+                                <label for="description">Описание</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-grid gap-2 mt-4 mb-4">
+                        <button type="submit" class="btn btn-success btn-lg py-4">Сохранить</button>
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
