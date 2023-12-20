@@ -16,6 +16,7 @@
             <div id="search_advice_wrapper"></div>
         </div>
         <div class="col-lg-4 col-2">
+
             <button type="submit" class="btn btn__mine btn__color  btn-lg mb-3 px-5">поиск</button>
         </div>
     </form>
@@ -50,7 +51,7 @@
                         {% endfor %}
                     </ul>
                     <div class="card-body">
-                        <a href="#" class="card-link link-dark" style=" float:right;">просмотреть весь список ...</a>
+                        <a href="{{ url_for('catalog')}}" class="card-link link-dark" style=" float:right;">просмотреть весь список ...</a>
                     </div>
                 </div>
             </div>
@@ -121,15 +122,17 @@
                         <p class="card-text"></p>
                     </div>
                     <ul class="list-group list-group-flush">
-                        {% for  ind, cat  in categories.items() %}
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            {{ cat }}
-                            <span class="badge bg-warning rounded-pill">14</span>
+                        {% for cat in categories.values() %}
+                        {%for key, value in cat.items()%}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">{{ key }}
+                            <span class="badge bg-warning rounded-pill">14
+                            </span>
                         </li>
+                        {% endfor %}
                         {% endfor %}
                     </ul>
                     <div class="card-body">
-                        <a href="#" class="card-link link-dark" style="float:right;">просмотреть весь список ...</a>
+                        <a href="/categories" class="card-link link-dark" style="float:right;">просмотреть весь список ...</a>
                     </div>
                 </div>
             </div>
