@@ -1,5 +1,7 @@
 import itertools
 from typing import Dict
+from urllib.parse import parse_qs
+from fastapi import Request, Query
 
 from database import SessionLocal, Base, engine
 from db.vacancy_db import vacancies_list
@@ -72,6 +74,13 @@ def get_experience():
         return {}
 
 
+def get_vacancy_list():
+    try:
+        return [vac_val for vac_val in vacancies_list.values()]
+    except Exception:
+        return {}
+
+
 def get_vacancies():
     try:
         return vacancies_list
@@ -84,3 +93,15 @@ def get_types():
         return types_dict
     except Exception:
         return {}
+
+
+def get_pagination_params(
+        offset: int = Query(0, ge=0),
+        limit: int = Query(10, gt=0)
+):
+    return {"offset": offset, "limit": limit}
+
+
+def get_param_dict(request: Request):
+    params = parse_qs(str(request.query_params))
+    return params if params else {}

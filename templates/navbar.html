@@ -1,6 +1,6 @@
 <nav class="navbar   navbar-dark navbar-expand-lg navbar-mine pt-4 px-3">
     <div class="container-fluid">
-        <a class="navbar-brand logo" href="#">РАБОТ.ОМСК</a>
+        <a class="navbar-brand logo" href="{{ url_for('index') }}">РАБОТ.ОМСК</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
                 aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -8,30 +8,18 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="{{ url_for('index') }}">Главная</a>
+                    <a class="nav-link active" aria-current="page" href="{{ url_for('index') }}">на главную</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="{{ url_for('catalog') }}">Все вакансии</a>
-                </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
-                       aria-expanded="false">
-                        Категории
-                    </a>
-                    <ul class="dropdown-menu">
-                        {% for ind, cat in categories.items() %}
-                        <li><a class="dropdown-item" href="#">{{cat}}</a></li>
-                        {% endfor %}
-                        <!-- <li>-->
-                        <!-- <hr class="dropdown-divider">-->
-                        <!-- </li>-->
-                    </ul>
+                    <a class="nav-link active" aria-current="page" href="{{ url_for('catalog') }}">все вакансии</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Контакты</a>
+                    <a class="nav-link active" aria-current="page" href="{{ url_for('categories') }}">категории</a>
                 </li>
 
-
+                <li class="nav-item">
+                    <a class="nav-link" href="#">контакты</a>
+                </li>
             </ul>
             <div class="d-flex">
                 <div class="btn btn-lg btn__mine btn__color">+ 7 (900) 800-90-90</div>
@@ -39,7 +27,6 @@
             <div class="d-flex" role="search">
                 <div class="btn btn-lg btn__mine "><i class="fa fa-telegram fa-lg" aria-hidden="true"></i></div>
                 <div class="btn btn-lg btn__mine "><i class="fa fa-whatsapp fa-lg" aria-hidden="true"></i></div>
-
             </div>
         </div>
     </div>

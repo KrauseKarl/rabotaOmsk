@@ -11,7 +11,7 @@
             <label for="search_box" class="visually-hidden">поиск</label>
             <input style="border: 3px solid var(--one-color);"
                    type="text" class="form-control form-control-lg"
-                   name="query" id="search_box" value=""
+                   name="search" id="search_box" value=""
                    placeholder="поиск вакансии в Омске">
             <div id="search_advice_wrapper"></div>
         </div>
@@ -22,40 +22,33 @@
     </form>
 
 </section>
-<!--<section class="section__search col-lg-6 offset-lg-2 col-8">-->
 
-<!--	<div class="search_area ">-->
-<!--		<form action="" method="GET">-->
-<!--			<input type="text" name="query" id="search_box" value="" autocomplete="off">-->
-<!--			<input type="submit" value="Поиск">-->
-<!--		</form>-->
-<!--		<div id="search_advice_wrapper"></div>-->
-<!--	</div>-->
-<!--</section>-->
 <section style="width:100%;background-color:var(--two-color);padding-bottom:40px;padding-top:40px;">
     <div class="container">
-        <div class="row d-flex justify-content-center">
-            <div class="col-lg-7  col-md-12 col-12">
-                <div class="card card__mine m-1" style="width:100%; background-color:var(--one-color)" >
+        <div class="row mb-3 d-flex justify-content-center">
+            <div class="col-lg-7  col-md-6 col-12">
+                <div class="card card__mine m-1" style="width:100%; background-color:var(--one-color)">
                     <div class="card-body">
                         <h5 class="card-title" style="float:left;">Свежие вакансии</h5>
                         <p class="card-text"></p>
                     </div>
                     <ul class="list-group list-group-flush">
                         {% for k, v in vacancies.items() %}
-                            <li class="list-group-item">
-                                <a href="{{ url_for('vacancy', slug=v.slug) }}"
-                                   style="color:var(--three-color);float:left; text-decoration-line: none;">{{ v.vacancy }}</a>
-                                <span style="float:right;">{{ v.salary }}</span>
-                            </li>
+                        <li class="list-group-item">
+                            <a href="{{ url_for('vacancy', slug=v.slug) }}"
+                               style="color:var(--three-color);float:left; text-decoration-line: none;">{{ v.vacancy
+                                }}</a>
+                            <span style="float:right;">{{ v.salary }}</span>
+                        </li>
                         {% endfor %}
                     </ul>
                     <div class="card-body">
-                        <a href="{{ url_for('catalog')}}" class="card-link link-dark" style=" float:right;">просмотреть весь список ...</a>
+                        <a href="{{ url_for('catalog')}}" class="card-link link-dark" style=" float:right;">просмотреть
+                            весь список ...</a>
                     </div>
                 </div>
             </div>
-            <div class="col-lg-4  col-md-6 col-12" >
+            <div class="col-lg-4  col-md-6  col-12">
                 <div id="carouselExampleDark" class="carousel slide carousel-fade" data-bs-ride="carousel">
                     <div class="carousel-inner card card__carousel">
                         <div class="carousel-item  active" data-bs-interval="2000">
@@ -75,15 +68,16 @@
 
                         </div>
                         <div class="carousel-item" data-bs-interval="2000">
-                             <img src="/assets/image/bg.png" class="d-block  card__carousel" alt="...">
+                            <img src="/assets/image/bg.png" class="d-block  card__carousel" alt="...">
                             <div class="carousel-caption d-none d-md-block text-end">
                                 <h3 style="color:#fff;">Менеджер по продажам</h3>
                                 <h4 style="color:var(--one-color); font-weight:900">от 50 000</h4>
                                 <a href="#" class="btn btn__mine ">подробнее...</a>
                             </div>
                         </div>
-                        <div  class="carousel-item" data-bs-interval="2000">
-                              <div class="d-block  card__carousel" style="background: linear-gradient(183deg, rgba(249,243,237,1) 0%, rgba(16,69,91,1) 100%);">
+                        <div class="carousel-item" data-bs-interval="2000">
+                            <div class="d-block  card__carousel"
+                                 style="background: linear-gradient(183deg, rgba(249,243,237,1) 0%, rgba(16,69,91,1) 100%);">
                             </div>
                             <div class="carousel-caption d-none d-md-block text-end">
                                 <h3 style="color:#fff;">Администратор ресторана</h3>
@@ -95,27 +89,43 @@
 
                 </div>
             </div>
+        </div>
+        <div class="row mb-3 d-flex justify-content-center">
             <div class="col-lg-4  col-md-6 col-12">
                 <div class="card  card__mine m-1" style="color:#fff; width:100%; background-color:var(--three-color)">
                     <div class="card-body">
-                        <h5 class="card-title" style="float:left;">по категориям</h5>
+                        <h5 class="card-title" style="float:left;">по типу занятости</h5>
                         <p class="card-text"></p>
                     </div>
                     <ul class="list-group">
-                        {% for index, cat in types.items() %}
+
                         <li class="list-group-item d-flex justify-content-between align-items-center">
-                            {{ cat }}
+                            вакансии недели
                             <span class="badge bg-secondary rounded-pill">14</span>
                         </li>
-                        {% endfor %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            подработка
+                            <span class="badge bg-secondary rounded-pill">14</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            удаленная
+                            <span class="badge bg-secondary rounded-pill">14</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            для студентов и школьников
+                            <span class="badge bg-secondary rounded-pill">14</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            работа для из декрета
+                            <span class="badge bg-secondary rounded-pill">14</span>
+                        </li>
                     </ul>
                     <div class="card-body">
-                        <a href="#" class="card-link link-light" style=" float:right;">просмотреть весь список...</a>
+                        <br>
                     </div>
                 </div>
             </div>
-
-            <div class="col-lg-4  col-md-6 col-12">
+            <div class="col-lg-7  col-md-6 col-12">
                 <div class="card card__mine m-1" style="color:#000; width:100%; background-color:var(--four-color)">
                     <div class="card-body">
                         <h5 class="card-title" style="float:left;">по специализации</h5>
@@ -132,30 +142,11 @@
                         {% endfor %}
                     </ul>
                     <div class="card-body">
-                        <a href="/categories" class="card-link link-dark" style="float:right;">просмотреть весь список ...</a>
+                        <a href="/categories" class="card-link link-dark" style="float:right;">просмотреть весь список
+                            ...</a>
                     </div>
                 </div>
             </div>
-
-            <div class="col-lg-3  col-md-6 col-12">
-                <div class="card card__mine m-1" style="color:#fff; width:100%; background-color:var(--one-color)">
-                    <div class="card-body">
-                        <h5 class="card-title" style="float:left;">по хештегам</h5>
-                        <p class="card-text"></p>
-                    </div>
-                    <ul class="list-group list-group-flush">
-                        {% for tag in tags %}
-                        <li class="list-group-item">
-                           <a href="#" class="card-link ">#&nbsp;{{tag|truncate(25, False, '...', 0)}}&nbsp;</a>
-                        </li>
-                        {% endfor %}
-                    </ul>
-                    <div class="card-body">
-                        <a href="#" class="card-link link-dark" style="float:right;">просмотреть весь список ...</a>
-                    </div>
-                </div>
-            </div>
-
         </div>
     </div>
 </section>

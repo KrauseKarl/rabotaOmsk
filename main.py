@@ -2,8 +2,10 @@ import ast
 import itertools
 import json
 import locale
+import urllib
 from time import sleep
 from typing import Dict, List, Optional, Annotated, Any
+from urllib.parse import unquote, urlencode, urlparse, urlsplit, parse_qs
 
 import uvicorn
 from fastapi import FastAPI, Request, Depends, Form, Response
@@ -50,6 +52,16 @@ app.add_middleware(
 )
 
 
+# @app.middleware('http')
+# async def some_middleware(request: Request, call_next):
+#     # update request query parameters
+#     q_params = dict(request.query_params)
+#     q_params['search'] = 'Водитель'
+#     request.scope['query_string'] = urlencode(q_params).encode('utf-8')
+#
+#     return await call_next(request)
+
+
 @app.get("/", response_class=HTMLResponse)
 async def index(
         request: Request,
@@ -90,51 +102,80 @@ async def categories(
 @app.get("/catalog", response_class=HTMLResponse)
 async def catalog(
         request: Request,
-        query: Optional[str] = None,
+        params: Dict = Depends(get_param_dict),
         category: Dict = Depends(get_categories),
         vacancies: Dict = Depends(get_vacancies),
-        types: List = Depends(get_types_list),
+        types: List = Depends(get_types),
         schedule: Dict = Depends(get_schedule),
         experience: Dict = Depends(get_experience),
+        pagination: dict = Depends(get_pagination_params)
 ):
+    param_dict = params
+    print(params)
+    vacancies = [
+        {key: vac}
+        for key, vac in vacancies.items()
+    ]
+    title = "Каталог"
 
+    if param_dict.get("search"):
+        search_string = param_dict.get("search")[0].strip().lower()
+        vacancies = [
+            {key: vac}
+            for vacan in vacancies
+            for key, vac in vacan.items()
+            if vac["vacancy"].lower() == search_string
+        ]
+    if param_dict.get("types"):
+        type_list = param_dict.get("types")
+        vacancies = [
+            {key: vac}
+            for vacan in vacancies
+            for key, vac in vacan.items()
+            if vac["types"] in type_list
+        ]
+    if param_dict.get("schedule"):
+        schedule_list = param_dict.get("schedule")
+        vacancies = [
+            {key: vac}
+            for vacan in vacancies
+            for key, vac in vacan.items()
+            if vac["schedule"] in schedule_list
+        ]
+    if param_dict.get("experience"):
+        experience_list = param_dict.get("experience")
+        vacancies = [
+            {key: vac}
+            for vacan in vacancies
+            for key, vac in vacan.items()
+            if vac["experience"] in experience_list
+        ]
+
+    limit = pagination["limit"]
+    offset = pagination["offset"]
+    start = (limit - 1) * offset
+    end = start + limit
+    try:
+        number_vacancy = len(vacancies)
+        if number_vacancy > 0 and param_dict.get("search")[0] != '':
+            title = f"Найдено вакансий - {number_vacancy}"
+        if number_vacancy < 1:
+            title = f"Найдено 0 вакансий"
+    except Exception:
+        title = "Каталог"
     context = {
         "request": request,
-        "vacancies": vacancies,
+        "vacancies": vacancies[start:end],
         "categories": category,
         "types": types,
         'schedule_dict': schedule,
         'experience_dict': experience,
+        "title": title,
     }
-    print('@@@@@@@@@@@@@@@@@@/catalog?query={query} = ', query)
-    # if query:
-    #     q = query.lower().strip()
-    #     vacancies = dict((k, v) for k, v in vacancies.items() if q in v['vacancy'].lower())
-    #     context.update({"vacancies": vacancies, 'message': f'вакансии по запросу "{q}"'})
     return templates.TemplateResponse(
         "catalog.html",
         context=context
     )
-
-
-# @app.get("/catalogs?query={query}", response_class=HTMLResponse)
-# async def catalogs(
-#         request: Request,
-#         query: Optional[str] = None,
-#         category: Dict = Depends(get_categories),
-#         vacancies: Dict = Depends(get_vacancies),
-#         types: Dict = Depends(get_types),
-#         schedule: Dict = Depends(get_schedule)
-# ):
-#
-#     context = {
-#         "request": request,
-#         "vacancies": vacancies,
-#         "categories": category,
-#         "types": types,
-#         'schedule_dict': schedule,
-#     }
-#     return templates.TemplateResponse("catalog.html", context=context)
 
 
 @app.get("/vacancy/{slug}/", response_class=HTMLResponse)
@@ -156,120 +197,115 @@ async def vacancy(
 
 
 @app.get("/search/", response_class=JSONResponse)
-async def vacancy(query: str) -> Dict[str, List]:
-    q = query.lower().strip()
-    res = [
+async def vacancy(search: str) -> Dict[str, List]:
+    q = search.lower().strip()
+    result = [
         (v['vacancy'], v['slug'], v['salary'])
         for k, v in vacancies_list.items()
         if q in v['vacancy'].lower() or q in [tag for tag in v['hashtags']]
     ]
-    return {'vacancy': res}
+    return {'vacancy': result[:5]}
 
 
 @app.get("/filter/", response_class=JSONResponse)
 async def filter_catalog(
         params: Optional[str] = None,
         category: Dict = Depends(get_categories),
-        vacancies: Dict = Depends(get_vacancies),
+        vacancies_list_base: Dict = Depends(get_vacancy_list),
         schedule: Dict = Depends(get_schedule),
         types: Dict = Depends(get_types),
         experience: Dict = Depends(get_experience),
-        response: Response = None,
         request: Request = None,
-        title: str = 'Каталог'
+        title: str = 'Каталог',
+        pagination: dict = Depends(get_pagination_params)
 ):
-    vacancies_list_base = [vac_val for vac_val in vacancies.values()]
+    # url = "http://foo.bar?a=1&b=2&c=true"  # actually get this from your http request header
+    # import urlparse
+    # split_result = urlparse.urlsplit(url)
+    # request_params = dict(urlparse.parse_qsl(split_result.query))
+    # base_url = request.query_params.get("search")
+    # base_url = unquote(base_url)
+    # print("base_url =", base_url)
+    # q_params = dict(request.query_params)
+    # print("q_params ", q_params)
+    # print("q_params ", q_params.get("url"))
+    # print('\nurl = ', url, type(url), '\n')
+    # de_url = url.decode("utf-8")
+    # # print('\nde_url = ', de_url, type(de_url), '\n')
+    # # .split("?")[0]
+    # params_dict = parse_qs(de_url)
+    #
+    # print('\nparams     ', params.split("?")[1], type(params), '\n')
+    # print('\nparams_dict        ', params_dict, type(params_dict), '\n')
+    params_dict_from_ajax = parse_qs(params)
 
-    if params[0] != '':
-        params_dict = ast.literal_eval(params)
-        params = [*params_dict.values()]
-        if params_dict.get("search"):
-            search_string = params_dict.get("search")
+    if params != '':
+        if params_dict_from_ajax.get("search"):
+            search_string = params_dict_from_ajax.get("search")[0].strip()
+            request.scope['query_string'] = urlencode(params_dict_from_ajax).encode('utf-8')
+            if isinstance(search_string, list):
+                search_string = search_string[0].strip().lower()
+            if isinstance(search_string, str):
+                search_string = search_string.strip().lower()
             vacancies_list_base = [
                 vacancies
                 for vacancies in vacancies_list_base
-                for key, value in vacancies.items()
-                if key == "vacancy" and search_string[0] in value
+                if search_string in vacancies["vacancy"].lower()
             ]
-        if params_dict.get("types"):
-            types_string = params_dict.get("types")
+        if params_dict_from_ajax.get("types"):
+            types_string = params_dict_from_ajax.get("types")
             vacancies_list_base = [
                 vacancies
                 for vacancies in vacancies_list_base
                 for key, value in vacancies.items()
                 if key == "types" and value in types_string
             ]
-        if params_dict.get("schedule"):
-            schedule_string = params_dict.get("schedule")
+        if params_dict_from_ajax.get("schedule"):
+            schedule_string = params_dict_from_ajax.get("schedule")
             vacancies_list_base = [
                 vacancies
                 for vacancies in vacancies_list_base
                 for key, value in vacancies.items()
                 if key == "schedule" and value in schedule_string
             ]
-        if params_dict.get("experience"):
-            experience_string = params_dict.get("experience")
+        if params_dict_from_ajax.get("experience"):
+            experience_string = params_dict_from_ajax.get("experience")
             vacancies_list_base = [
                 vacancies
                 for vacancies in vacancies_list_base
                 for key, value in vacancies.items()
                 if key == "experience" and value in experience_string
             ]
+    try:
+        if len(list(params_dict_from_ajax.values())) > 1:
+            params_list = list(itertools.chain.from_iterable(params_dict_from_ajax.values()))
+        else:
+            params_list = list(params_dict_from_ajax.values())[0]
+    except Exception:
+        params_list = []
 
-    if len(params) > 1:
+    try:
+        number_vacancy = len(vacancies_list_base)
+        if number_vacancy > 0 and params_dict_from_ajax.get("search")[0] != '':
+            title = f"Найдено вакансий - {number_vacancy}"
+        if number_vacancy < 1:
+            title = f"Найдено 0 вакансий"
+    except Exception:
+        title = "Каталог"
 
-        params_list = list(itertools.chain.from_iterable(params))
-    else:
-        params_list = params
-    # if len(params_list) >= 2:
-    #     all_vacancy = [
-    #         vac_val
-    #         for vac_val in vacancy_list
-    #         for name, value in vac_val.items()
-    #         if value in params_list
-    #     ]
-    #     count_vacancy = len(vacancies)
-    #     title = f'Найдено - {count_vacancy} вакансий'
-    #     # sleep(2)
-    # elif 0 < len(params_list) < 2:
-    #     params_list = params_list[0]
-    #     all_vacancy = [
-    #         vac_val
-    #         for vac_val in vacancy_list
-    #         for name, value in vac_val.items()
-    #         if params_list in value
-    #     ]
-    #     count_vacancy = len(vacancies)
-    #     title = f'Найдено - {count_vacancy} вакансий'
-    # else:
-    #     all_vacancy = [vac_val for vac_slug, vac_val in vacancies.items()]
-    # search_param = request.cookies.get('search_param')
-    # print('search_param = ', search_param.decode())
-    # param_dict = json.loads(params)
-    # params_list = [v for k, v in param_dict.items()]
-    # print(params_list)
-    # if search_param:
-    #     prev_param = json.load(search_param)
-    #     print("\nprev_param = ", type(prev_param))
-
-    # sleep(1.2)
-    # response.set_cookie(key="search_param", value=encode_param, httponly=True)
-    # if params_dict.get("search"):
-    #     vacancy_list = [
-    #         vac_val
-    #         for k, vac_val in vacancies.items()
-    #         for name, value in vac_val.items()
-    #         if params_dict.get("search")[0] in value]
-    # else:
-    #     vacancy_list = vacancies
+    limit = pagination["limit"]
+    offset = pagination["offset"]
+    start = (limit - 1) * offset
+    end = start + limit
     return {
-        'result': vacancies_list_base,
+        'result': vacancies_list_base[start:end],
         "categories": category,
         'schedule_dict': schedule,
         'experience_dict': experience,
         'types': types,
         'title': title,
         'params': params_list,
+        "url": params
     }
 
 

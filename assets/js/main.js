@@ -1,7 +1,10 @@
+
+/* LIVE SEARCH ON MAIN PAGE START */
 var suggest_count = 0;
 var input_initial_value = '';
 var suggest_selected = 0;
 
+//$('#filter').hide();
 function handleClick() {
     $("#search_box").val("");
     $("#search_advice_wrapper").html("").hide();
@@ -25,7 +28,7 @@ $(window).load(function(){
 
 					input_initial_value = $(this).val();
 					// производим AJAX запрос к /ajax/ajax.php, передаем ему GET query, в который мы помещаем наш запрос
-					var queryString = '?query='+ $(this).val()
+					var queryString = '?search='+ $(this).val()
                     $.ajax({
                         url: `/search/${queryString}`,
                         type: 'GET',
@@ -123,7 +126,6 @@ function key_activate(n){
 	}else if(n == -1 && suggest_selected > 0){
 		suggest_selected--;
 	}
-
 	if( suggest_selected > 0){
 		$('#search_advice_wrapper div').eq(suggest_selected-1).addClass('active');
 		$("#search_box").val( $('#search_advice_wrapper div').eq(suggest_selected-1).text() );
@@ -131,33 +133,148 @@ function key_activate(n){
 		$("#search_box").val( input_initial_value );
 	}
 }
+/* LIVE SEARCH ON MAIN PAGE END */
+
+
+/* SCROLL LOADER */
 function loaderScroll(){
     var spinner = '<div class="d-flex justify-content-center"><div class="spinner-grow" role="status" style="color:var(--one-color);width: 5rem; height: 5rem;"><span class="visually-hidden">Loading...</span></div></div>'
     $('#vacancies').html('');
     $('#vacancies').html(spinner);
 }
+/* SCROLL LOADER */
+
+
+
+
 function cleanInputSearch(){
-        $("#search_input_category").val('');
-        $('#search_result').html('');
-        $('.accordion-collapse').each(function() {
-             $(this).removeClass('show');
-        });
-        $('.accordion-item').each(function() {
-            $(this).show()}
-        );
-        $('.list-group > li').each(function() {
-            $(this).css({'background-color': 'var(--two-color)'}).show();
-        });
+    $("#search_input_category").val('');
+    $('#search_result').html('');
+    $('.accordion-collapse').each(function() {
+         $(this).removeClass('show');
+    });
+    $('.accordion-item').each(function() {
+        $(this).show()}
+    );
+    $('.list-group > li').each(function() {
+        $(this).css({'background-color': 'var(--two-color)'}).show();
+    });
 };
 
-$("#search_submit").on('click', function(event) {
-    event.preventDefault();
-    var searchParam = $("#search_input").val();
-    var search_dict = {'search': searchParam }
-    var paramsList = JSON.stringify(search_dict);
-    searching(paramsList);
-
+$(window).load(function(){
+    $("#search_submit").on('click', function(event) {
+    //event.preventDefault();
+    var urlSearch = $("form").serialize()
+    searching(urlSearch);
+    });
 });
+
+$(window).load(function(){
+    $("input.form-check-input").on("change", function() {
+    var urlSearch = $("form").serialize()
+    searching(urlSearch);
+})
+});
+function setLocation(curLoc){
+    var currentUrl = location.search;
+    if(currentUrl.split('?').length > 1) {
+        var oldURL = currentUrl[1]
+    };
+    location.search = curLoc
+}
+
+function searching(params) {
+    $.ajax({
+	url: '/filter/',
+	method: 'get',
+	data: {'params': params},
+	success: function(data){
+        responseTemplate(data);
+	},
+    });
+};
+
+function filterBord () {
+
+    $('#hide_filter').toggle();
+    $('#show_filter').toggle();
+    $('#filter').toggle(900);
+
+};
+function cleanCatalogInputSearch(){
+    $('body input:checkbox').prop('checked', false);
+    searching('');
+};
+
+function cleanSearch(){
+    $("#search_input").val('');
+    cleanCatalogInputSearch();
+    window.location.search = "";
+
+};
+
+function showLoc() {
+   var x = window.location;
+   var t = ['Property - Typeof - Value',
+            'window.location - ' + (typeof x) + ' - ' + x ];
+   for (var prop in x){
+     t.push(prop + ' - ' + (typeof x[prop]) + ' - ' +  (x[prop] || 'n/a'));
+   }
+    alert(t.join('\n'));
+   console.log(parseUrlQuery())
+}
+function parseUrlQuery() {
+    var data = {};
+    if(location.search) {
+        var pair = (location.search.substr(1)).split('&');
+        for(var i = 0; i < pair.length; i ++) {
+            var param = pair[i].split('=');
+            data[param[0]] = param[1];
+        }
+    }
+    return data;
+}
+
+function responseTemplate(data) {
+    $('#vacancies').html('');
+    var list = data.result;
+    var title = data.title;
+    $('.title h1').text(title).fadeIn(2000);
+    $('#vacancies').html('');
+    if(list.length > 0) {
+        for(var i in list){
+            if(list[i] != ''){
+                var schedule  =  '<h6 class="text-muted">график работы&nbsp;&nbsp;<span style="float:right;">'+ list[i]["schedule"] +'</span></h6>'
+                var type     =  '<h6 class="text-muted">тип занятости&nbsp;&nbsp;<span style="float:right;">'+list[i]["types"] +'</span></h6>'
+                var experience = '<h6 class="text-muted">опыт&nbsp;&nbsp;<span style="float:right;">'+list[i]["experience"] +'</span></h6>'
+                var html = '<div class="col-12"><div class="card  card__mine card_vacancy  m-1"><div class="card-body"><h5 class="card-title" style="float:right;"><a class="catalog__link" href="/vacancy/'+list[i]["slug"]+'">'+ list[i]["vacancy"] +'</a></h5><h6>'+ list[i]["salary"] +'</h6></div><div class="card-body">'+schedule+type+experience+'</div></div></div>'
+
+                $('#vacancies').append(html);
+                var params = data.params;
+
+                $(".title_page h1").html(data.title);
+                $('#title').html('');
+                if(params.length > 0 && params[0] != '') {
+                   $(".title_page > h4").html(data.title);
+                   $('.search__string').html('поиск по:').addClass("card__vacancy__h").css("background-color:", "var(--four-color)");
+                   $('.search__string').prepend('<div style="float:right;" class="text-muted search__clean"><span onclick="cleanSearch()">очистить</span></div>');
+                } else {
+                   $('.search__string').html('').removeClass("card__vacancy__h");
+                   $('.search__clean').html('');
+                };
+                for(var i in params) {
+                    var subtitle = '<span class="mb-2">' + params[i]+ '</span>'
+                    $('#title').append(subtitle);
+                    };
+                };
+            };
+    }
+    else {
+         $('#vacancies').append('<div class="col-12 text-center m-5"><h2 style="color:var(--one-color); font-weigh:700;">404</h2><h4>Ничего не найдено</h4></div>');
+    };
+ };
+
+/// CATEGORIES SEARCHING
 $(window).load(function(){
     $("#search_input_category").on("change", function(event) {
         event.preventDefault();
@@ -174,8 +291,6 @@ $(window).load(function(){
         searchProfession(searchCategory);
     });
 });
-
-
 function searchProfession(searchCategory) {
     if(searchCategory.length > 2) {
         $('.accordion-item').each(function() {
@@ -197,7 +312,7 @@ function searchProfession(searchCategory) {
                                 var keyWord = $(this).data('subtitle');
                                 var pattern = new RegExp("/((?:^|>)[^<]*)("+searchCategory+")/si");
                                 var highLight = keyWord.replace(pattern)
-                                var html = "<div class='accordion-body'><ul class='list-group list-group-flush'><li class='list-group-item sub__profession mb-3 py-2' style='background-color:var(--four-color); color:var(--three-color);'><a class='link-dark fs-4' href='/catalog?query="+$(this).data('subtitle')+"'>"+$(this).text()+"</a><span class='text-muted' style='float:right'>"+accordionName+"</span></li></div></ul>"
+                                var html = "<div class='accordion-body'><ul class='list-group list-group-flush'><li class='list-group-item sub__profession mb-3 py-2' style='background-color:var(--four-color); color:var(--three-color);'><a class='link-dark fs-4' href='/catalog?search="+$(this).data('subtitle')+"'>"+$(this).text()+"</a><span class='text-muted' style='float:right'>"+accordionName+"</span></li></div></ul>"
 
                                 $('#search_result').append(html)
                             } else {
@@ -227,7 +342,7 @@ function searchProfession(searchCategory) {
                     if(idParent == accordionItem ) {
                         $(this).find('li').each(function() {
                             if($(this).data('id') == idSubTitle){
-                                var html = "<div class='accordion-body'><ul class='list-group list-group-flush'><li class='list-group-item sub__profession mb-3 py-2' style='background-color:var(--two-color);'><a class='link-dark' href='/catalog?query="+$(this).data('subtitle')+"'>"+$(this).text()+"</a><span class='text-muted' style='float:right'>"+accordionName+"</span></li></div></ul>"
+                                var html = "<div class='accordion-body'><ul class='list-group list-group-flush'><li class='list-group-item sub__profession mb-3 py-2' style='background-color:var(--two-color);'><a class='link-dark' href='/catalog?search="+$(this).data('subtitle')+"'>"+$(this).text()+"</a><span class='text-muted' style='float:right'>"+accordionName+"</span></li></div></ul>"
                                 $('#search_result').append(html)
                             } else {
                                 $(this).hide();
@@ -256,125 +371,4 @@ function searchProfession(searchCategory) {
 
         });
     };
-};
-
-
-
-$("input.form-check-input").on("change", function() {
-    var arr = $(this).is(":checked");
-    var paramsList = new Array();
-    var jsonData = {};
-    $('input.form-check-input').each(function() {
-        if($(this).is(":checked")){
-            var oneParam = $(this).val();
-            if(jsonData[this.name] != null){
-                jsonData[this.name].push(oneParam)
-            } else {
-                jsonData[this.name] = [oneParam]
-            };
-        }
-    });
-    var nameSearch = $('#search_input').val()
-    if(nameSearch != null || nameSearch != '') {
-        jsonData['search'] = [nameSearch]
-    }
-    var data = JSON.stringify(jsonData);
-    loaderScroll();
-    searching(data);
-})
-// {'params': paramsList }
-function searching(params) {
-    $.ajax({
-	url: '/filter/',
-	method: 'get',
-	data: {"params": params},
-	success: function(data){
-		$('#vacancies').html('');
-
-		var list = data.result;
-		var title = data.title;
-		$('.title h1').text(title).fadeIn(2000);
-		$('#vacancies').html('');
-		if(list.length > 0) {
-		    for(var i in list){
-                if(list[i] != ''){
-                    // добавляем слою позиции
-                    var schedule  =  '<h6 class="text-muted">график работы&nbsp;&nbsp;<span style="float:right;">'+ list[i]["schedule"] +'</span></h6>'
-                    var  type     =  '<h6 class="text-muted">тип занятости&nbsp;&nbsp;<span style="float:right;">'+list[i]["types"] +'</span></h6>'
-                    var experience = '<h6 class="text-muted">опыт&nbsp;&nbsp;<span style="float:right;">'+list[i]["experience"] +'</span></h6>'
-                    var html = '<div class="col-12"><div class="card  card__mine card_vacancy  m-1"><div class="card-body"><h4 class="card-title" style="float:right;"><a class="catalog__link" href="/vacancy/'+list[i]["slug"]+'">'+ list[i]["vacancy"] +'</a></h4><h5>'+ list[i]["salary"] +'</h5></div><div class="card-body">'+schedule+type+experience+'</div></div></div>'
-                    $('#vacancies').append(html);
-                    var params = data.params;
-                    $(".title_page h4").html(data.title);
-                    $('#title').html('');
-                    if(params.length > 0 && params[0] != '') {
-                       $(".title_page h4").html(data.title);
-                       $('.search__string').html('поиск по:').addClass("card__vacancy__h").css("background-color:", "var(--four-color)");
-                       $('.search__string').prepend('<div style="float:right;" class="text-muted search__clean"><span onclick="cleanSearch()">очистить</span></div>');
-                    } else {
-                       $('.search__string').html('').removeClass("card__vacancy__h");
-                       $('.search__clean').html('');
-                    };
-                    for(var i in params) {
-                        var subtitle = '<span class="mb-2">' + params[i]+ '</span>'
-                        $('#title').append(subtitle);
-                        };
-                    };
-                };
-        }
-		else {
-             $('#vacancies').append('<div class="col-12 text-center m-5"><h2 style="color:var(--one-color); font-weigh:700;">404</h2><h4>Ничего не найдено</h4></div>');
-        };
-	   },
-    });
-};
-function filterBord () {
-    $('#form').toggle(800);
-    $('#hide_filter').toggle();
-    $('#show_filter').toggle();
-};
-function cleanSearch(){
-    $.ajax({
-	url: '/filter/',
-	method: 'get',
-	data: {"params": ''},
-	success: function(data){
-		$('#vacancies').html('');
-
-		var list = data.result;
-		var title = data.title;
-		$('.title h1').text(title).fadeIn(2000);
-		$('#vacancies').html('');
-		if(list.length > 0) {
-		    for(var i in list){
-                if(list[i] != ''){
-                    // добавляем слою позиции
-                    var schedule  =  '<h6 class="text-muted">график работы&nbsp;&nbsp;<span style="float:right;">'+ list[i]["schedule"] +'</span></h6>'
-                    var  type     =  '<h6 class="text-muted">тип занятости&nbsp;&nbsp;<span style="float:right;">'+list[i]["type"] +'</span></h6>'
-                    var experience = '<h6 class="text-muted">опыт&nbsp;&nbsp;<span style="float:right;">'+list[i]["experience"] +'</span></h6>'
-                    var html = '<div class="col-12"><div class="card  card__mine card_vacancy  m-1"><div class="card-body"><h4 class="card-title" style="float:right;"><a class="catalog__link" href="/vacancy/'+list[i]["slug"]+'">'+ list[i]["vacancy"] +'</a></h4><h5>'+ list[i]["salary"] +'</h5></div><div class="card-body">'+schedule+type+experience+'</div></div></div>'
-                    $('#vacancies').append(html);
-                    var params = data.params;
-                    $(".title_page h4").html(data.title);
-                    $('#title').html('');
-                    if(params.length > 0 && params[0] != '') {
-                       $(".title_page h4").html(data.title);
-                       $('.search__string').html('поиск по:').addClass("card__vacancy__h").css("background-color:", "var(--four-color)");
-                       $('.search__string').prepend('<div style="float:right;" class="text-muted search__clean"><span onclick="cleanSearch()">очистить</span></div>');
-                    } else {
-                       $('.search__string').html('').removeClass("card__vacancy__h");
-                       $('.search__clean').html('');
-                    };
-                    for(var i in params) {
-                        var subtitle = '<span class="mb-2">' + params[i]+ '</span>'
-                        $('#title').append(subtitle);
-                        };
-                    };
-                };
-        }
-		else {
-             $('#vacancies').append('<div class="col-12 text-center m-5"><h2 style="color:var(--one-color); font-weigh:700;">404</h2><h4>Ничего не найдено</h4></div>');
-        };
-	   },
-    });
 };

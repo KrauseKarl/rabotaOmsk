@@ -4,127 +4,138 @@
 {% endblock %}
 
 {% block content %}
-<section style="width:100%;background-color:var(--two-color);padding-bottom:40px;padding-top:40px;">
-
+<section style="background-color:var(--two-color);padding-bottom:40px;padding-top:20px;">
     <div class="container">
-        <div class="row">
-            <!--TITLE  START-->
-            <div class="col-12 my-3 title_page"><h4>Каталог
-            </h4>
+  <!--TITLE  START-->
+        <div class="row d-flex justify-content-start">
+            <div class="col-12 my-3 title_page offset-lg-1">
+                <h1>{{title}}
+                </h1>
             </div>
-             <!--TITLE  END-->
 
-            <!--SEARCH INPUT START-->
-            <div class="row">
-                <div class="col-12 my-3 ">
-                    <form class="row g-3 " action="" method="GET">
-                        <div class="col-lg-6 offset-lg-2 col-8">
-                            <label for="search_input" class="visually-hidden">поиск</label>
+        </div>
+<!--TITLE  END-->
+        <div class="row d-flex justify-content-center">
+            <div class="d-lg-block  col-lg-4 col-md-5 col-12">
+                <form method="get" action="" style="background-color:var(--four-color)"
+                      class="d-lg-flex  card card__mine card_vacancy m-1">
+                    <div class="card-body mb-2">
+                        <div id="error"></div>
+                        <div class="input-group flex-nowrap">
                             <input style="border: 3px solid var(--one-color);"
-                                   type="text" class="form-control form-control-lg"
-                                   name="search" id="search_input" value="{{request.query_params.query}}"
-                                   placeholder="поиск вакансии в Омске">
+                                   type="text"
+                                   class="card__mine form-control form-control-lg"
+                                   name="search"
+                                   id="search_input"
+                                   value="{% if request.query_params.get('search') %}{{ request.query_params.get('search')}} {% endif %}"
+                                   aria-describedby="addon-wrapping"
+                                   placeholder="поиск ...">
+                            <span class="input-group-text btn__catalog__clean__search">
+                            <input type="button" onclick="cleanSearch()" class="btn_empty"
+                                   value="&#10006;"/>
+                            </span>
                         </div>
-                        <div class="col-lg-4 col-2">
+                        <div class="mt-3 d-grid gap-2">
                             <button type="submit"
                                     id="search_submit"
-                                    class="btn btn__mine btn__color btn-lg mb-3 px-5">поиск</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-            <!--SEARCH INPUT END-->
-
-            <div class="row d-flex justify-content-between">
-            <div class="d-lg-block  col-lg-3 col-12">
-                <div class="d-lg-none d-flex">
-                    <span id="show_filter"  style="text-end; float:right;" class="btn__mine btn__color mb-2" onclick="filterBord()">Показать фильтр</span>
-                    <span id="hide_filter"  style="display:none;float:right;" class="btn__mine btn__dark mb-2" onclick="filterBord()">Скрыть фильтр</span>
-                </div>
-               <form id='form' method="get"  style="display:none; background-color:var(--four-color)" class="d-lg-flex  card card__mine card_vacancy m-1">
-                    <div class="card-body">
-                        <h5 class="card-title card__vacancy__h">Фильтр</h5>
-<!--                        <div class="list-group">-->
-<!--                            <input class="form-control mb-2" placeholder="найти вакансию" name="search" type="text"-->
-<!--                                   value="" id="search_input">-->
-<!--                            <input class="btn btn-warning mb-2" id="search_submit" type="submit" value="найти">-->
-<!--                        </div>-->
-                    </div>
-                    <div class="card-body">
-                        <h6 class="card-title  search__string"></h6>
-                        <div class="list-group" id="title">
+                                    class="btn btn__mine btn__color btn-lg  px-5">поиск
+                            </button>
                         </div>
                     </div>
-                    <div class="card-body">
-                        <h5 class="card-title card__vacancy__h">тип занятости</h5>
-                        <div class="list-group">
-                            {% for ind, obj in types.items() %}
-                            <div class="form-check">
-                                <input class="form-check-input" name='types' type="checkbox" value="{{obj}}"
-                                       id="types_{{ind}}">
-                                <label class="form-check-label" for="types_{{ind}}"> {{ obj }}
-                                </label>
+                    <div class="text-center d-grid gap-2 mt-2">
+                        <span id="show_filter"  class="btn__mine  text-dark mb-2"
+                              onclick="filterBord()">Показать фильтр&emsp;&#9660;
+                        </span>
+                        <span id="hide_filter" style="display:none;"  class=" btn__mine  text-dark   mb-2"
+                          onclick="filterBord()">Скрыть фильтр&emsp;&#9650;
+                        </span>
+                    </div>
+                    <div id="filter">
+                        <div class="card-body filter__bar d-none">
+                            <h5 class="card-title card__vacancy__h">Фильтр</h5>
+                            <h6 class="card-title  search__string"></h6>
+                            <div class="list-group" id="title">
                             </div>
-                            {% endfor %}
                         </div>
-                    </div>
-                    <div class="card-body">
-                        <h5 class="card-title card__vacancy__h">режим работы</h5>
-                        <div class="list-group">
-                            {% for ind, obj in schedule_dict.items() %}
-                            <div class="form-check">
-                                <input class="form-check-input" name='schedule' type="checkbox" value="{{obj}}"
-                                       id="cat_{{ind}}">
-                                <label class="form-check-label" for="cat_{{ind}}"> {{ obj }}
-                                </label>
+                        <div class="card-body">
+                            <h5 class="card-title card__vacancy__h">тип занятости</h5>
+                            <div class="list-group">
+                                {% for ind, obj in types.items() %}
+                                <div class="form-check">
+                                    <input class="form-check-input" name='types' type="checkbox" value="{{obj}}"
+                                           id="types_{{ind}}"
+                                           {% if obj in request.query_params.types %}checked="checked"{% endif %}>
+                                    <label class="form-check-label" for="types_{{ind}}"> {{ obj }}
+                                    </label>
+                                </div>
+                                {% endfor %}
                             </div>
-                            {% endfor %}
                         </div>
-                    </div>
-                    <div class="card-body">
-                        <h5 class="card-title card__vacancy__h">опыт работы</h5>
-                        <div class="list-group">
-                            {% for ind, obj in experience_dict.items() %}
-                            <div class="form-check">
-                                <input class="form-check-input" name='experience' type="checkbox" value="{{obj}}"
-                                       id="ex_{{ind}}">
-                                <label class="form-check-label" for="ex_{{ind}}"> {{ obj }}
-                                </label>
+                        <div class="card-body">
+                            <h5 class="card-title card__vacancy__h">режим работы</h5>
+                            <div class="list-group">
+                                {% for ind, obj in schedule_dict.items() %}
+                                <div class="form-check">
+                                    <input class="form-check-input" name='schedule' type="checkbox" value="{{obj}}"
+                                           id="cat_{{ind}}"
+                                           {% if obj in request.query_params.schedule %}checked="checked"{% endif %}>
+                                    <label class="form-check-label" for="cat_{{ind}}"> {{ obj }}
+                                    </label>
+                                </div>
+                                {% endfor %}
                             </div>
-                            {% endfor %}
                         </div>
-                    </div>
-                    <div class="card-body">
+                        <div class="card-body">
+                            <h5 class="card-title card__vacancy__h">опыт работы</h5>
+                            <div class="list-group">
+                                {% for ind, obj in experience_dict.items() %}
+                                <div class="form-check">
+                                    <input class="form-check-input" name='experience' type="checkbox"
+                                           value="{{obj}}"
+                                           {% if obj in request.query_params.experience %}checked="checked"{% endif %}
+                                           id="ex_{{ind}}">
+                                    <label class="form-check-label" for="ex_{{ind}}"> {{ obj }}
+                                    </label>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div class="card-body">
+                        </div>
                     </div>
                 </form>
             </div>
-            <div id="vacancies" class="col-lg-9 col-12">
+            <div id="vacancies" class="col-lg-7 col-md-6 col-12">
                 <div class="col-12">
-                    {% for ind, obj in vacancies.items() %}
+                    {% for vac in vacancies %}
+                    {% for ind, obj in vac.items() %}
                     <div class="card  card__mine card_vacancy  m-1">
-                        <div class="card-body">
-                            <h5 class="card-title " style="float:right;">
-                                <a class="catalog__link" href="{{ url_for('vacancy', slug=obj.slug)}}">{{ obj.vacancy }}
+                        <div class="card-body row">
+                            <div class="col-6">
+                                <h6>{{ obj.salary }}
+                                </h6>
+                            </div>
+                            <div class="col-6"><h5 class="card-title" style="float:right;">
+                                <a class="catalog__link" href="{{ url_for('vacancy', slug=obj.slug)}}">
+                                    {{ obj.vacancy }}
                                 </a>
                             </h5>
-                            <h6>{{ obj.salary }} </h6>
+                            </div>
 
                         </div>
                         <div class="card-body">
                             <h6>график работы&nbsp;&nbsp;<span style="float:right;">{{obj.schedule}}
                             </span></h6>
-                            <h6 class="text-muted">тип занятости&nbsp;&nbsp;<span style="float:right;">{{ obj.type }}
+                            <h6 class="text-muted">тип занятости&nbsp;&nbsp;<span style="float:right;">{{ obj.types }}
                             </span></h6>
                             <h6 class="text-muted">опыт&nbsp;&nbsp;<span style="float:right;">{{obj.experience}}
                             </span></h6>
                         </div>
                     </div>
                     {% endfor %}
+                    {% endfor %}
                 </div>
-
-
             </div>
-        </div>
         </div>
     </div>
 </section>
