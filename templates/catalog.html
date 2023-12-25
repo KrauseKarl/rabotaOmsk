@@ -5,6 +5,7 @@
 
 {% block content %}
 <section class="section__catalog">
+
     <div class="container">
   <!--TITLE  START-->
         <div class="row d-flex justify-content-start">
@@ -17,16 +18,16 @@
         </div>
 <!--TITLE  END-->
 
-        <div class="row d-flex justify-content-center">
+        <div class="row d-flex justify-content-center ">
             <div class="d-lg-block  col-lg-4 col-md-5 col-12">
                 <form method="get" action="" style="background-color:var(--four-color)"
                       class="d-lg-flex  card card__mine card_vacancy m-1">
                     <div class="card-body mb-2">
                         <div id="error"></div>
                         <div class="input-group flex-nowrap">
-                            <input style="border: 3px solid var(--one-color);"
-                                   type="text"
-                                   class="card__mine form-control form-control-lg"
+                            <input type="text"
+                                   required
+                                   class="card__mine search_input form-control form-control-lg"
                                    name="search"
                                    id="search_input"
                                    value="{% if request.query_params.get('search') %}{{ request.query_params.get('search')}} {% endif %}"
@@ -54,7 +55,7 @@
                     </div>
                     <div id="filter">
                         <div class="card-body filter__bar ">
-                            <h5 class="card-title card__vacancy__h">Фильтр</h5>
+
                             <h6 class="card-title  search__string"></h6>
                             <div class="list-group" id="title">
                             </div>
@@ -103,29 +104,30 @@
                     </div>
                 </form>
             </div>
-            <div id="vacancies" class="col-lg-7 col-md-6 col-12">
+            <div id="vacancies" class=" section col-lg-7 col-md-6 col-12">
                 <div class="col-12">
                     {% for obj in vacancies %}
                     <div class="card  card__mine card_vacancy  m-1 mb-2">
                         <div class="card-body row">
-                            <div class="col-6">
-                                <h6>{{ obj.salary }}
+                            <div data-load class="col-6 load">
+                                <h6 >{{ obj.salary }}
                                 </h6>
                             </div>
-                            <div class="col-6"><h5 class="card-title" style="float:right;">
-                                <a class="catalog__link" href="{{ url_for('vacancy', slug=obj.slug)}}">
-                                    {{ obj.vacancy }}
-                                </a>
-                            </h5>
+                            <div class="col-6 ">
+                                <h5 data-load class="card-title " style="float:right;">
+                                    <a class="catalog__link load" href="{{ url_for('vacancy', slug=obj.slug)}}">
+                                        {{ obj.vacancy }}
+                                    </a>
+                                </h5>
                             </div>
 
                         </div>
-                        <div class="card-body">
-                            <h6>график работы&nbsp;&nbsp;<span style="float:right;">{{obj.schedule}}
+                        <div class=" card-body">
+                            <h6 data-load class="text-muted load">график работы&nbsp;&nbsp;<span style="float:right;">{{obj.schedule}}
                             </span></h6>
-                            <h6 class="text-muted">тип занятости&nbsp;&nbsp;<span style="float:right;">{{ obj.types }}
+                            <h6 data-load class="text-muted load">тип занятости&nbsp;&nbsp;<span style="float:right;">{{ obj.types }}
                             </span></h6>
-                            <h6 class="text-muted">опыт&nbsp;&nbsp;<span style="float:right;">{{obj.experience}}
+                            <h6 data-load class="text-muted load">опыт&nbsp;&nbsp;<span style="float:right;">{{obj.experience}}
                             </span></h6>
                         </div>
                     </div>

@@ -15,20 +15,32 @@
 
         <div class="row d-flex justify-content-evenly">
             <div class="col-lg-4 col-12">
-                <div class="card card__mine card_vacancy card__carousel m-1">
+                <div class="card card__mine card_vacancy  m-1">
                     <div class="card-body ">
-                        <h2 class="card-title card__vacancy__h">{{ vacancy.title }}</h2>
-                        <h5 class="text-muted">{{ vacancy.employer }}</h5>
+                        <h2 class="card-title ">{{ vacancy.title }}</h2>
+                        <span class="text-muted">{{ vacancy.employer }}</span>
                     </div>
-
+                    {% if vacancy.salary  %}
                     <div class="card-body " style="float:left;">
-                        {% for key, vac in vacancy.items() if key in ['salary', 'experience', 'time_table',
-                        'shift'] %}
-                        {% if vac %}
-                        <h4>{{ vac }}</h4>
-                        {% endif %}
-                        {% endfor %}
+                         <span>зарплата</span><h4>{{ vacancy.salary }}</h4>
                     </div>
+                    {% endif %}
+                    {% if vacancy.experience %}
+                    <div class="card-body " style="float:left;">
+                        <span>опыт работы</span><h4>{{ vacancy.experience }}</h4>
+                    </div>
+                    {% endif %}
+                    {% if vacancy.types %}
+                    <div class="card-body " style="float:left;">
+                        <span>график</span><h4>{{ vacancy.types }}</h4>
+                    </div>
+                    {% endif %}
+                     {% if vacancy.schedule %}
+                    <div class="card-body " style="float:left;">
+                        <span>график</span><h4>{{ vacancy.schedule }}</h4>
+                    </div>
+                    {% endif %}
+
                 </div>
 
             </div>
@@ -54,7 +66,7 @@
                             <h2 class="card-title card__vacancy__h">требования</h2>
                             <ul class="list-group">
                                 {% for adv in vacancy.requirements %}
-                                <li>&nbsp;-&nbsp;{{ adv }}</li>
+                                <li class="list-group-item">&nbsp;-&nbsp;{{ adv }}</li>
                                 {% endfor %}
                             </ul>
                         </div>
@@ -63,11 +75,11 @@
                         {% if vacancy.responsibility %}
                             <div class="card-body">
                             <h2 class="card-title card__vacancy__h">обязанности</h2>
-                            <div class="list-group">
+                            <ul class="list-group">
                                 {% for adv in vacancy.responsibility %}
-                                <p>&nbsp;-&nbsp;{{ adv }}</p>
+                                <li class="list-group-item">&nbsp;-&nbsp;{{ adv }}</li>
                                 {% endfor %}
-                            </div>
+                            </ul>
                         </div>
                             <div class="card-body"></div>
                         {% endif %}
@@ -79,11 +91,12 @@
                     <div class="card  card__mine card_vacancy m-1">
                         <div class="card-body">
                             <h2 class="card-title card__vacancy__h">преимущества</h2>
-                            <div class="list-group">
+                            <ul class="list-group">
                                 {% for adv in vacancy.advantages %}
-                                <p>&nbsp;-&nbsp;{{ adv }}</p>
+                                <li class="list-group-item">&nbsp;-&nbsp;{{ adv }}</li>
                                 {% endfor %}
-                            </div>
+                            </ul>
+
                         </div>
                         <div class="card-body"></div>
                     </div>

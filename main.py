@@ -37,9 +37,19 @@ app.add_middleware(
 )
 app.add_middleware(
     TrustedHostMiddleware,
-    allowed_hosts=["*"]
+    allowed_hosts=[
+        "*"
+    ]
 )
-
+# app.add_middleware(
+#     TrustedHostMiddleware,
+#     allowed_hosts=[
+#         "xn--80aac1bjkblpg.xn--p1ai",
+#         "www.xn--80aac1bjkblpg.xn--p1ai",
+#         "localhost",
+#         "127.0.0.1"
+#     ]
+# )
 origins = [
     "http://localhost:8000",
 ]
@@ -104,7 +114,7 @@ async def catalog(
         request: Request,
         params: Dict = Depends(get_param_dict),
         category: Dict = Depends(get_categories),
-        vacancies:  Dict = Depends(get_vacancy_list),
+        vacancies: Dict = Depends(get_vacancy_list),
         types: List = Depends(get_types),
         schedule: Dict = Depends(get_schedule),
         experience: Dict = Depends(get_experience),
@@ -113,11 +123,12 @@ async def catalog(
 ):
 
     if params.get("search"):
-        search_string = params.get("search")[0].strip().lower()
+        search_string = params.get("search")[0].strip()
+        print('search_string =', search_string)
         vacancies = [
             vac
             for vac in vacancies
-            if vac["vacancy"].lower() == search_string
+            if vac["vacancy"].lower() == search_string.lower()
         ]
     if params.get("types"):
         type_list = params.get("types")
@@ -145,7 +156,6 @@ async def catalog(
     offset = pagination["offset"]
     start = (limit - 1) * offset
     end = start + limit
-    print(len(vacancies))
     try:
         number_vacancy = len(vacancies)
         if number_vacancy > 0 and params.get("search")[0] != '':
@@ -188,14 +198,28 @@ async def vacancy(
 
 
 @app.get("/search/", response_class=JSONResponse)
-async def vacancy(search: str) -> Dict[str, List]:
+async def vacancy(
+        search: str,
+        categories: Dict = Depends(get_categories)
+) -> Dict[str, List]:
     q = search.lower().strip()
-    result = [
+    print("q =", q)
+    sorted_vacancy = [
         (v['vacancy'], v['slug'], v['salary'])
         for k, v in vacancies_list.items()
         if q in v['vacancy'].lower() or q in [tag for tag in v['hashtags']]
     ]
-    return {'vacancy': result[:5]}
+    sorted_category = [
+                        sub_dict[sub_code]
+                        for code, title_dict in categories.items()
+                        for name, sub_dict in title_dict.items()
+                        for sub_code, sum_name in sub_dict.items()
+                        if sub_dict[sub_code].lower() == q
+                    ]
+    return {
+        "vacancy": sorted_vacancy[:5],
+        "category": list(set(sorted_category))
+    }
 
 
 @app.get("/filter/", response_class=JSONResponse)
