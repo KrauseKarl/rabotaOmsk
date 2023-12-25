@@ -104,50 +104,40 @@ async def catalog(
         request: Request,
         params: Dict = Depends(get_param_dict),
         category: Dict = Depends(get_categories),
-        vacancies: Dict = Depends(get_vacancies),
+        vacancies:  Dict = Depends(get_vacancy_list),
         types: List = Depends(get_types),
         schedule: Dict = Depends(get_schedule),
         experience: Dict = Depends(get_experience),
-        pagination: dict = Depends(get_pagination_params)
+        pagination: dict = Depends(get_pagination_params),
+        title=""
 ):
-    param_dict = params
-    print(params)
-    vacancies = [
-        {key: vac}
-        for key, vac in vacancies.items()
-    ]
-    title = "Каталог"
 
-    if param_dict.get("search"):
-        search_string = param_dict.get("search")[0].strip().lower()
+    if params.get("search"):
+        search_string = params.get("search")[0].strip().lower()
         vacancies = [
-            {key: vac}
-            for vacan in vacancies
-            for key, vac in vacan.items()
+            vac
+            for vac in vacancies
             if vac["vacancy"].lower() == search_string
         ]
-    if param_dict.get("types"):
-        type_list = param_dict.get("types")
+    if params.get("types"):
+        type_list = params.get("types")
         vacancies = [
-            {key: vac}
-            for vacan in vacancies
-            for key, vac in vacan.items()
+            vac
+            for vac in vacancies
             if vac["types"] in type_list
         ]
-    if param_dict.get("schedule"):
-        schedule_list = param_dict.get("schedule")
+    if params.get("schedule"):
+        schedule_list = params.get("schedule")
         vacancies = [
-            {key: vac}
-            for vacan in vacancies
-            for key, vac in vacan.items()
+            vac
+            for vac in vacancies
             if vac["schedule"] in schedule_list
         ]
-    if param_dict.get("experience"):
-        experience_list = param_dict.get("experience")
+    if params.get("experience"):
+        experience_list = params.get("experience")
         vacancies = [
-            {key: vac}
-            for vacan in vacancies
-            for key, vac in vacan.items()
+            vac
+            for vac in vacancies
             if vac["experience"] in experience_list
         ]
 
@@ -155,14 +145,15 @@ async def catalog(
     offset = pagination["offset"]
     start = (limit - 1) * offset
     end = start + limit
+    print(len(vacancies))
     try:
         number_vacancy = len(vacancies)
-        if number_vacancy > 0 and param_dict.get("search")[0] != '':
+        if number_vacancy > 0 and params.get("search")[0] != '':
             title = f"Найдено вакансий - {number_vacancy}"
         if number_vacancy < 1:
             title = f"Найдено 0 вакансий"
     except Exception:
-        title = "Каталог"
+        title = ""
     context = {
         "request": request,
         "vacancies": vacancies[start:end],
@@ -216,7 +207,7 @@ async def filter_catalog(
         types: Dict = Depends(get_types),
         experience: Dict = Depends(get_experience),
         request: Request = None,
-        title: str = 'Каталог',
+        title: str = '',
         pagination: dict = Depends(get_pagination_params)
 ):
     # url = "http://foo.bar?a=1&b=2&c=true"  # actually get this from your http request header
@@ -283,15 +274,17 @@ async def filter_catalog(
             params_list = list(params_dict_from_ajax.values())[0]
     except Exception:
         params_list = []
-
+    print('fil', len(vacancies_list_base))
+    if len(vacancies_list_base) == 0:
+        title = f"Найдено 0 вакансий"
     try:
         number_vacancy = len(vacancies_list_base)
-        if number_vacancy > 0 and params_dict_from_ajax.get("search")[0] != '':
+        if number_vacancy > 0:
             title = f"Найдено вакансий - {number_vacancy}"
         if number_vacancy < 1:
             title = f"Найдено 0 вакансий"
     except Exception:
-        title = "Каталог"
+        title = ""
 
     limit = pagination["limit"]
     offset = pagination["offset"]

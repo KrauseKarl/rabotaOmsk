@@ -54,8 +54,15 @@ section.section__search {
     -moz-box-shadow: 0px 5px 10px 2px rgba(34, 60, 80, 0.2);
     box-shadow: 0px 5px 10px 2px rgba(34, 60, 80, 0.2);
      position: relative;
-
-
+}
+.section__catalog {
+    margin-top: 10px;
+    background-color:var(--two-color);
+    padding-bottom: 40px;
+    padding-top: 20px;
+    padding-right:80px;
+    padding-left:80px;
+    width: 100%;
 }
 .navbar-mine {
     background-color:transparent;
@@ -108,9 +115,9 @@ section.section__search {
     border: 3px solid var(--three-color);
 }
 .card__mine {
-    -webkit-box-shadow: 0px 5px 10px 2px rgba(34, 60, 80, 0.2);
-    -moz-box-shadow: 0px 5px 10px 2px rgba(34, 60, 80, 0.2);
-    box-shadow: 0px 5px 10px 2px rgba(34, 60, 80, 0.2);
+    -webkit-box-shadow: 0px 5px 10px 2px rgba(34, 60, 80, 0.4);
+    -moz-box-shadow: 0px 5px 10px 2px rgba(34, 60, 80, 0.4);
+    box-shadow: 0px 5px 10px 2px rgba(34, 60, 80, 0.4);
 }
 .card__mine.card_vacancy {
       padding:20px;
@@ -256,4 +263,8 @@ footer {
 .btn__catalog__clean__search:hover,
 .btn__catalog__clean__search:active {
      border: 3px solid var(--one-color);
+}
+.form-check-input:checked {
+    background-color: var(--three-color);
+    border:var(--three-color);
 }

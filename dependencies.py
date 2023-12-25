@@ -104,4 +104,5 @@ def get_pagination_params(
 
 def get_param_dict(request: Request):
     params = parse_qs(str(request.query_params))
+    print('params ------', params)
     return params if params else {}
