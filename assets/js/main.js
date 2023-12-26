@@ -121,7 +121,7 @@ function handleClick() {
                                                 var slug = list[i][1]
                                                 var name = list[i][0]
                                                 var salary = list[i][2]
-                                                var html = '<div class="advice_variant"><a class="advice__variant__link" href="/vacancy/'+slug+'/">'+name+'</a><b style="float:right;">'+salary+'</b></div>'
+                                                var html = '<div class="advice_variant mb-2"><a class="advice__variant__link" href="/vacancy/'+slug+'/">'+name+'</a><b style="float:right;">'+salary+'</b></div>'
                                                 $('#search_advice_wrapper').append(html);
                                             }
                                        };
@@ -499,4 +499,37 @@ function filterBord() {
 $('#hide_filter').toggle();
 $('#show_filter').toggle();
 $('#filter').toggle(900);
+};
+/*------------------
+    BUTTON ACTIVE
+--------------------*/
+
+$(window).scroll(function(){
+var wt = $(window).scrollTop();
+var wh = $(window).height();
+var ww = $(window).width();
+var et = $('#opportunities').offset().top;
+var eh = $('#opportunities').outerHeight();
+var dh = $(document).height();
+var bnv = $('#fix_bottom_navbar');
+var snv = $('#fix_side_navbar');
+if (wt + wh >= et || wh + wt == dh || eh + et < wh){
+    if(ww < wh){
+        bnv.fadeIn('slow').removeClass('d-none').addClass('d-block');
+        snv.fadeOut('slow').removeClass('d-block').addClass('d-none');
+    } else {
+        snv.fadeIn('slow').removeClass('d-none').addClass('d-block');
+        bnv.fadeOut('slow').removeClass('d-block').addClass('d-none');
+    };
+} else {
+    bnv.fadeOut().addClass('d-none').removeClass('d-block');
+    snv.fadeOut().addClass('d-none').removeClass('d-block');
+    $("#btn_main").removeClass('color-button-active');
+    $('#btn_vacancy').removeClass('color-button-active');
+    $('#btn_call_now').removeClass('color-button-active');
+    $('#btn_contacts').removeClass('color-button-active');
+};
+});
+function filterButton() {
+    $("#fil").toggle();
 };

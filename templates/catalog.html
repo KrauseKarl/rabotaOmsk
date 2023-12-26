@@ -5,8 +5,7 @@
 
 {% block content %}
 <section class="section__catalog">
-
-    <div class="container">
+    <div class="container-fluid"  style="width:100%; margin-right:0; margin-left:0;">
   <!--TITLE  START-->
         <div class="row d-flex justify-content-start">
             <div class="col-10 my-3 title_page offset-lg-1 align-items-center">
@@ -19,7 +18,7 @@
 <!--TITLE  END-->
 
         <div class="row d-flex justify-content-center ">
-            <div class="d-lg-block  col-lg-4 col-md-5 col-12">
+            <div class="d-lg-block  col-lg-3 col-md-5 col-12">
                 <form method="get" action="" style="background-color:var(--four-color)"
                       class="d-lg-flex  card card__mine card_vacancy m-1">
                     <div class="card-body mb-2">
@@ -45,7 +44,7 @@
                             </button>
                         </div>
                     </div>
-                    <div class="text-center d-grid gap-2 mt-2">
+                    <div class="d-lg-block d-none text-center d-grid gap-2 mt-2">
                         <span id="show_filter"  class="btn__mine  text-dark mb-2"
                               onclick="filterBord()">Показать фильтр&emsp;&#9660;
                         </span>
@@ -53,9 +52,8 @@
                           onclick="filterBord()">Скрыть фильтр&emsp;&#9650;
                         </span>
                     </div>
-                    <div id="filter">
+                    <div id="filter" class="d-lg-block d-none">
                         <div class="card-body filter__bar ">
-
                             <h6 class="card-title  search__string"></h6>
                             <div class="list-group" id="title">
                             </div>
@@ -104,7 +102,7 @@
                     </div>
                 </form>
             </div>
-            <div id="vacancies" class=" section col-lg-7 col-md-6 col-12">
+            <div id="vacancies" class=" section col-lg-8 col-md-6 col-12">
                 <div class="col-12">
                     {% for obj in vacancies %}
                     <div class="card  card__mine card_vacancy  m-1 mb-2">
@@ -137,5 +135,90 @@
         </div>
     </div>
 </section>
+<div id='fix_side_navbar'   class="d-none fixed-side-bar">
+    <div class="container">
+        <div class="row">
+            <div class="col px-0">
+                <a id="btn_vacancy"     href="#vacancy"     class="color-button-side">
+                    <i class="fa fa-briefcase fa-2x"></i><br>
+                    вакансии
+                </a>
+                <a id="btn_main"        href="#main"        class="color-button-side">
+                      <i class="fa fa-home fa-2x"></i><br>
+                    главная
+                </a>
+                <a id="btn_call_now"    href="#call_now"    class="color-button-side">
+                    <i class="fa fa-pencil-square fa-2x"></i><br>
+                    напиши
+                </a>
+                <a id="btn_contacts"    href="#contacts"    class="color-button-side">
+                      <i class="fa fa-envelope fa-2x"></i><br>
+                    контакты
+                </a>
+            </div>
 
+        </div>
+    </div>
+</div>
+<div id='fix_bottom_navbar' class="d-lg-none d-block fixed-bottom-bar">
+    <div class="container">
+        <div id="fil" style="height:700px; padding:20px; margin-bottom:20px;background-color:var(--four-color)"
+             class="card__mine d-flex topper  justify-content-evenly align-items-center">
+            <div id="filter_bottom">
+                <div class="card-body filter__bar ">
+                    <h6 class="card-title  search__string"></h6>
+                    <div class="list-group">
+                    </div>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title card__vacancy__h">тип занятости</h5>
+                    <div class="list-group">
+                        {% for ind, obj in types.items() %}
+                        <div class="form-check">
+                            <input class="form-check-input" name='types' type="checkbox" value="{{obj}}"
+                                   id="types{{ind}}">
+                            <label class="form-check-label" for="types_{{ind}}"> {{ obj }}
+                            </label>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title card__vacancy__h">режим работы</h5>
+                    <div class="list-group">
+                        {% for ind, obj in schedule_dict.items() %}
+                        <div class="form-check">
+                            <input class="form-check-input" name='schedule' type="checkbox" value="{{obj}}"
+                                   id="cat{{ind}}">
+                            <label class="form-check-label" for="cat_{{ind}}"> {{ obj }}
+                            </label>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title card__vacancy__h">опыт работы</h5>
+                    <div class="list-group" id="group_">
+                        {% for ind, obj in experience_dict.items() %}
+                        <div class="form-check">
+                            <input class="form-check-input" name='experience' type="checkbox"
+                                   value="{{obj}}" id="ex{{ind}}">
+                            <label class="form-check-label" for="ex_{{ind}}"> {{ obj }}
+                            </label>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="card-body">
+                </div>
+            </div>
+        </div>
+        <div class="col-md pr-4 d-flex topper justify-content-center align-items-center">
+            <button class="w-100 color-button" onclick="filterButton()">
+                <i style="float:left" class="fa fa-filter fa-2x"></i><span class="float:right">фильтр</span>
+            </button>
+        </div>
+
+    </div>
+</div>
 {% endblock %}

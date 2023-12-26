@@ -5,19 +5,19 @@
 
 {% block content %}
 <section class="section__search ">
-    <form class="row g-3 " action="{{ url_for('catalog')}}" method="GET">
-        <div class="col-lg-6 offset-lg-2 col-8">
-
+    <form class="row g-4 d-flex justify-content-center " action="{{ url_for('catalog')}}" method="GET">
+        <div class="col-lg-6 offset-lg-2  col-md-6 offset-md-2 col-8">
             <label for="search_box" class="visually-hidden">поиск</label>
-            <input style="border: 3px solid var(--one-color);"
+            <input style="border: 3px solid var(--one-color); margin-left:20px;"
                    type="text" class="form-control form-control-lg"
                    name="search" id="search_box" value=""
                    placeholder="поиск вакансии в Омске">
             <div id="search_advice_wrapper"></div>
         </div>
-        <div class="col-lg-4 col-2">
-
-            <button type="submit" class="btn btn__mine btn__color  btn-lg mb-3 px-5">поиск</button>
+        <div class="col-lg-4 col-4">
+            <button type="submit" style=" margin-left:20px;padding: 10px 25px;" class="btn btn-lg btn__mine btn__color">
+                <i style="float:left" class="fa fa-search"></i>
+            </button>
         </div>
     </form>
 
@@ -60,7 +60,7 @@
                                 ">
 
                             </div>
-                            <div class="carousel-caption d-none d-md-block text-end">
+                            <div class="carousel-caption d-block text-end">
                                 <h3 style="color:#fff;">Строитель</h3>
                                 <h4 style="color:var(--one-color); font-weight:900">от 80 000</h4>
                                 <a href="#" class="btn btn__mine ">подробнее...</a>
@@ -69,7 +69,7 @@
                         </div>
                         <div class="carousel-item" data-bs-interval="2000">
                             <img src="/assets/image/bg.png" class="d-block  card__carousel" alt="...">
-                            <div class="carousel-caption d-none d-md-block text-end">
+                            <div class="carousel-caption d-block text-end">
                                 <h3 style="color:#fff;">Менеджер по продажам</h3>
                                 <h4 style="color:var(--one-color); font-weight:900">от 50 000</h4>
                                 <a href="#" class="btn btn__mine ">подробнее...</a>
@@ -79,7 +79,7 @@
                             <div class="d-block  card__carousel"
                                  style="background: linear-gradient(183deg, rgba(249,243,237,1) 0%, rgba(16,69,91,1) 100%);">
                             </div>
-                            <div class="carousel-caption d-none d-md-block text-end">
+                            <div class="carousel-caption d-block text-end">
                                 <h3 style="color:#fff;">Администратор ресторана</h3>
                                 <h4 style="color:var(--one-color); font-weight:900">от 45 000</h4>
                                 <a href="#" class="btn btn__mine ">подробнее...</a>
