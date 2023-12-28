@@ -390,4 +390,113 @@ footer {
 .hidden {
     display:none;
 }
+/*---------------------
+  About
+-----------------------*/
+.about__img {
+    width:100%;
+    height:auto;
+	position: relative;
+}
 
+
+.about__img iframe:hover {
+    width:100%;
+    height:310px;
+	border-radius: 20px;
+	border: 2px solid var(--one-color);
+	-webkit-box-shadow: 0px 10px 30px rgba(255,175,32, 0.7);
+	box-shadow: 0px 10px 30px rgba(255,175,32, 0.8);
+}
+
+/*---------------------
+  youtube
+-----------------------*/
+.youtube {
+    background-position: center;
+    background-repeat: no-repeat;
+    position: relative;
+    display: inline-block;
+    overflow: hidden;
+    transition: all 200ms ease-out;
+    cursor: pointer;
+    width:100%;
+    height:610px;
+    color: var(--one-color);
+	border-radius: 20px;
+	/* -webkit-box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.7);
+	box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.8); */
+	border: 2px solid var(--two-color);
+}
+.youtube__loaded {
+    width:100%;
+    height:610px;
+    border-radius: 20px;
+	-webkit-box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.7);
+	box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.8);
+	border: 2px solid var(--two-color);
+}
+.youtube .play {
+    background: url('/assets/image/youtube-play-btn.png') no-repeat; /*ВАЖНО: здесь укажите адрес до изображения*/
+    background-position: 0 -50px;
+    -webkit-background-size: 100% auto;
+    background-size: 100% auto;
+    position: absolute;
+    height: 50px;
+    width: 69px;
+    transition: none;
+    top:0;
+    left:0;
+    right:0;
+    bottom:0;
+    margin:auto;
+}
+.youtube:hover .play {
+    background-position: 0 0;
+}
+/*---------------------
+  carousel
+-----------------------*/
+@media screen and (min-width: 576px) {
+  .carousel-inner {
+    display: flex;
+  }
+  .carousel-item {
+    display: block;
+    margin-right: 0;
+    flex: 0 0 calc(100% / 3);
+  }
+   .carousel-item.carousel-item-mini {
+    display: block;
+    margin-right: 0;
+    flex: 0 0 calc(100%);
+  }
+  .img-wrapper {
+    height: 21vw;
+  }
+}
+.carousel-inner {
+  padding: 1em;
+
+}
+.card {
+  margin: 0 0.5em;
+  border-radius: 8px;
+  box-shadow: 2px 6px 8px 0 rgba(22, 22, 26, 0.01);
+  font-size: 0.9em;
+}
+
+.carousel-control-prev,
+.carousel-control-next {
+  width: 4vh;
+  height: 8vh;
+  background-color: var(--one-color);
+  border-radius: 20%;
+  top: 50%;
+  transform: translateY(-50%);
+  opacity: 0.5;
+}
+.carousel-control-prev:hover,
+.carousel-control-next:hover {
+  opacity: 0.9;
+}
