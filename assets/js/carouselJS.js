@@ -1,7 +1,6 @@
 var ItemCarousel = document.getElementById('www')
-if (window.matchMedia("(min-width:576px)").matches) {
-  var carousel = new bootstrap.Carousel(ItemCarousel, {
-    interval: 800,
+var carousel = new bootstrap.Carousel(ItemCarousel, {
+    interval: 2000,
     wrap: true,
     touch: true,
     cycle:true
@@ -9,6 +8,8 @@ if (window.matchMedia("(min-width:576px)").matches) {
   var carouselWidth = $("#www-inner")[0].scrollWidth;
   var cardWidth = $(".carousel-item").width();
   var scrollPosition = 0;
+if (window.matchMedia("(min-width:576px)").matches) {
+
   $("#www-next").on("click", function () {
     if (scrollPosition < carouselWidth - cardWidth) {
       scrollPosition = scrollPosition + cardWidth;
@@ -23,6 +24,19 @@ if (window.matchMedia("(min-width:576px)").matches) {
     }
   });
 } else {
+     $("#www-next").on("click", function () {
+        if (scrollPosition < carouselWidth - cardWidth) {
+          scrollPosition = scrollPosition + cardWidth;
+          console.log(".carousel-control-next")
+          $("#www-inner").animate({ scrollLeft: scrollPosition }, 800);
+        }
+      });
+      $("#www-prev").on("click", function () {
+        if (scrollPosition > 0) {
+          scrollPosition = scrollPosition - cardWidth;
+          $("#www-inner").animate({ scrollLeft: scrollPosition }, 800);
+        }
+      });
   $(ItemCarousel).addClass("slide");
 };
 
@@ -32,6 +46,7 @@ if (window.matchMedia("(min-width:576px)").matches) {
 var YTC = document.getElementById('ytubeCarousel')
 
 if (window.matchMedia("(min-width:576px)").matches) {
+  $(YTC).removeClass("carousel-fade slide");
   const carouseYTC = new bootstrap.Carousel(YTC, {
     interval: 800,
     wrap: true,
@@ -41,13 +56,11 @@ if (window.matchMedia("(min-width:576px)").matches) {
 
   var carouselWidthYTC = $(".inner-ytube")[0].scrollWidth;
   var cardWidthYTC = $(".item-ytube").width();
-
   var scrollPositionYTC = 0;
 
   $("#next-ytube").on("click", function () {
-    if (scrollPositionYTC < carouselWidthYTC - cardWidthYTC * 4) {
+    if (scrollPositionYTC < carouselWidthYTC - cardWidthYTC * 3) {
       scrollPositionYTC = scrollPositionYTC + cardWidthYTC;
-        console.log(".inner-ytube")
       $(".inner-ytube").animate({ scrollLeft: scrollPositionYTC }, 800);
     }
   });
@@ -58,5 +71,5 @@ if (window.matchMedia("(min-width:576px)").matches) {
     }
   });
 } else {
-  $(YTC).addClass("slide");
+  $(YTC).addClass("carousel-fade slide");
 };

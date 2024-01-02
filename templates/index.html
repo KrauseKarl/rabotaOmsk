@@ -23,12 +23,11 @@
 
 </section>
 
-<section style="width:100%;background-color:var(--two-color);padding-bottom:40px;padding-top:40px;">
+<section class="section__main" style="background-color:var(--two-color)">
     <div class="container">
-
-        <div class="row mb-lg-3 mb-3 d-flex justify-content-center">
-            <div class="col-lg-7  col-md-6 col-12">
-                <div class="card card__mine m-1" style="width:100%; background-color:var(--one-color)">
+        <div class="row mb-lg-5 mb-2 d-flex justify-content-evenly">
+            <div class="mb-2 col-lg-7  col-md-6 col-12">
+                <div class="card card__mine" style="width:100%; background-color:var(--one-color)">
                     <div class="card-body">
                         <h5 class="card-title" style="float:left;">Свежие вакансии</h5>
                         <p class="card-text"></p>
@@ -44,105 +43,65 @@
                         {% endfor %}
                     </ul>
                     <div class="card-body">
-                        <a href="{{ url_for('catalog')}}" class="card-link link-dark" style=" float:right;">просмотреть
-                            весь список ...</a>
+                        <a href="{{ url_for('catalog')}}" class="card-link link-dark" style=" float:right;">
+                            просмотреть весь список ...
+                        </a>
                     </div>
                 </div>
             </div>
-            <div class="col-lg-4  col-md-6  col-12">
-                <div class="container m-1 ">
-                    <!--    carousel    -->
-                    <div id="www" class="carousel"  data-bs-ride="carousel">
-                        <div class="carousel-inner card__carousel align-items-center"
-                             style="background-color: var(--four-color);"
-                             id="www-inner">
-                            {% for k, v in vacancies.items() %}
-                            <div data-bs-interval="4000" class="carousel-item carousel-item-mini {% if loop.first %}active{% endif %}">
-                                <div class="card shadow-sm rounded-2 p-2" style="height:18rem;">
-                                    <div class="card-body d-flex  justify-content-end align-items-start">
-                                        <a href="{{ url_for('vacancy', slug=v.slug) }}"
-                                           style="color:var(--three-color); text-align:end; text-decoration-line: none;">
-                                            <h4 class="card-title  fw-bold text-end">{{ v.vacancy }}</h4>
-                                        </a>
-                                    </div>
-                                    <div class="card-body d-flex  justify-content-start align-items-end">
-                                        <h3 class="text-success fw-bold">{{ v.salary }}
-                                        </h3>
-                                    </div>
-                                </div>
+            <!--    carousel    -->
+            <div class="col-lg-4 col-md-6 col-12 mb-2  carousel" id="www" data-bs-ride="carousel">
+                <div class="carousel-inner card__carousel align-items-center"
+                     id="www-inner">
+                    {% for k, v in vacancies.items() %}
+                    <div class="carousel-item carousel-item-mini {% if loop.first %}active{% endif %}">
+                        <div class="card  card__slider" style="color:#fff;{% if loop.index is divisibleby 2 %}background-color:var(--three-color){% else %}background-color:var(--four-color){% endif %}" >
+                            <div class="card-body d-flex  justify-content-end align-items-start">
+                                <a href="{{ url_for('vacancy', slug=v.slug) }}"
+                                   style="{% if loop.index is divisibleby 2 %}color:var(--two-color){% else %}color:var(--three-color){% endif %}; text-align:end; text-decoration-line: none;">
+                                    <h2 class="card-title  fw-bold text-end">{{ v.vacancy }}</h2>
+                                </a>
                             </div>
-                            {% endfor %}
+                            <div class="card-body d-flex  justify-content-start align-items-end">
+                                <h3 class="{% if loop.index is divisibleby 2 %}text-warning{% else %}text-success{% endif %} fw-bold">{{ v.salary }}
+                                </h3>
+                            </div>
                         </div>
-                        <button class="carousel-control-prev" id="www-prev"
-                                type="button"
-                                data-bs-target="#www"
-                                data-bs-slide="prev">
-                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                            <span class="visually-hidden">Previous</span>
-                        </button>
-                        <button class="carousel-control-next" id="www-next"
-                                type="button"
-                                data-bs-target="#www"
-                                data-bs-slide="next">
-                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                            <span class="visually-hidden">Next</span>
-                        </button>
                     </div>
-                    <!--    carousel    -->
+                    {% endfor %}
                 </div>
-                <!--                <div id="carouselExampleDark" class="carousel slide carousel-fade" data-bs-ride="carousel">-->
-                <!--                    <div class="carousel-inner card card__carousel">-->
-                <!--                        <div class="carousel-item  active">-->
-                <!--                            &lt;!&ndash;                            data-bs-interval="4000">&ndash;&gt;-->
-                <!--                            <div class="d-block  card__carousel" style="background: -webkit-linear-gradient(186deg, #f9f3ed, #10455b);-->
-                <!--                                background: -moz-linear-gradient(186deg, #f9f3ed, #10455b);-->
-                <!--                                background: -ms-linear-gradient(186deg, #f9f3ed, #10455b);-->
-                <!--                                background: -o-linear-gradient(186deg, #f9f3ed, #10455b);-->
-                <!--                                background: linear-gradient(186deg, #f9f3ed, #10455b);-->
-                <!--                                ">-->
-
-                <!--                            </div>-->
-                <!--                            <div class="carousel-caption d-block text-end">-->
-                <!--                                <h3 style="color:#fff;">Строитель</h3>-->
-                <!--                                <h4 style="color:var(&#45;&#45;one-color); font-weight:900">от 80 000</h4>-->
-                <!--                                <a href="#" class="btn btn__mine ">подробнее...</a>-->
-                <!--                            </div>-->
-
-                <!--                        </div>-->
-                <!--                        <div class="carousel-item">-->
-                <!--                            &lt;!&ndash;                            data-bs-interval="8000">&ndash;&gt;-->
-                <!--                            <img src="/assets/image/bg.png" class="d-block  card__carousel" alt="...">-->
-                <!--                            <div class="carousel-caption d-block text-end">-->
-                <!--                                <h3 style="color:#fff;">Менеджер по продажам</h3>-->
-                <!--                                <h4 style="color:var(&#45;&#45;one-color); font-weight:900">от 50 000</h4>-->
-                <!--                                <a href="#" class="btn btn__mine ">подробнее...</a>-->
-                <!--                            </div>-->
-                <!--                        </div>-->
-                <!--                        <div class="carousel-item">-->
-                <!--                            &lt;!&ndash;                            data-bs-interval="10000">&ndash;&gt;-->
-                <!--                            <div class="d-block  card__carousel"-->
-                <!--                                 style="background: linear-gradient(183deg, rgba(249,243,237,1) 0%, rgba(16,69,91,1) 100%);">-->
-                <!--                            </div>-->
-                <!--                            <div class="carousel-caption d-block text-end">-->
-                <!--                                <h3 style="color:#fff;">Администратор ресторана</h3>-->
-                <!--                                <h4 style="color:var(&#45;&#45;one-color); font-weight:900">от 45 000</h4>-->
-                <!--                                <a href="#" class="btn btn__mine ">подробнее...</a>-->
-                <!--                            </div>-->
-                <!--                        </div>-->
-                <!--                    </div>-->
-
-                <!--                </div>-->
+                <button class="carousel-control-prev" id="www-prev"
+                        type="button"
+                        data-bs-target="#www"
+                        data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" id="www-next"
+                        type="button"
+                        data-bs-target="#www"
+                        data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
             </div>
+            <!--    carousel    -->
         </div>
+    </div>
+</section>
 
-        <div class="row mx-lg-5 mb-3 d-flex justify-content-center">
+<section class="section__main" style="background-color:transparent">
+    <div class="container-fluid">
+        <div class="row mb-lg-5 mx-lg-5 mb-2 d-flex justify-content-center">
             {% include 'carousel.html' %}
         </div>
-
-        <div class="row mb-3 d-flex justify-content-center">
+    </div>
+</section>
+<section class="section__main" style="background-color:var(--two-color)">
+    <div class="container">
+        <div class="row mb-lg-5 mb-2 d-flex justify-content-evenly">
             <div class="col-lg-4  col-md-6 col-12">
-                <div class="card  card__mine m-1"
-                     style="color:#fff; width:100%; background-color:var(--three-color)">
+                <div class="card  card__mine m-1" style="color:#fff; width:100%;background-color:var(--three-color)">
                     <div class="card-body">
                         <h5 class="card-title" style="float:left;">по типу занятости</h5>
                         <p class="card-text"></p>
@@ -176,7 +135,7 @@
                 </div>
             </div>
             <div class="col-lg-7  col-md-6 col-12">
-                <div class="card card__mine m-1" style="color:#000; width:100%; background-color:var(--four-color)">
+                <div class="card card__mine m-1" style="color:#fff; width:100%;background-color:var(--one-color)">
                     <div class="card-body">
                         <h5 class="card-title" style="float:left;">по специализации</h5>
                         <p class="card-text"></p>
@@ -186,7 +145,7 @@
                         {%for key, value in cat.items()%}
                         <li class="list-group-item d-flex justify-content-between align-items-center">{{ key }}
                             <span class="badge bg-warning rounded-pill">14
-                            </span>
+                        </span>
                         </li>
                         {% endfor %}
                         {% endfor %}
@@ -198,11 +157,7 @@
                     </div>
                 </div>
             </div>
-
-
         </div>
     </div>
 </section>
-
-
 {% endblock %}
